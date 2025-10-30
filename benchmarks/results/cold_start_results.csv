@@ -1,0 +1,10 @@
+scenario,language,platform,runs,mean_ms,median_ms,min_ms,max_ms,stddev_ms,p95_ms,p99_ms,claim_target_ms,claim_validated
+app_startup,rust,native,100,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1000,PENDING
+app_startup,python,native,100,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1000,PENDING
+first_request,rust,native,100,0.0,0.0,0.0,0.0,0.0,0.0,0.0,500,PENDING
+first_request,python,native,100,0.0,0.0,0.0,0.0,0.0,0.0,0.0,500,PENDING
+lambda_cold_start,rust,aws_lambda,50,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1000,PENDING
+lambda_cold_start,python,aws_lambda,50,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1000,PENDING
+cloudflare_workers,rust,wasm,50,0.0,0.0,0.0,0.0,0.0,0.0,0.0,100,PENDING
+model_loading,rust,native,100,0.0,0.0,0.0,0.0,0.0,0.0,0.0,500,PENDING
+model_loading,python,native,100,0.0,0.0,0.0,0.0,0.0,0.0,0.0,500,PENDING

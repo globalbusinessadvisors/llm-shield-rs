@@ -1,0 +1,9 @@
+{
+  "total_requests": 1875000,
+  "total_errors": 16800,
+  "mean_latency_us": 2320.6116846289133,
+  "p50_latency_us": 2324.319259975885,
+  "p95_latency_us": 3096.222320450083,
+  "p99_latency_us": 3367.9213516628697,
+  "requests_per_second": 62500.0
+}

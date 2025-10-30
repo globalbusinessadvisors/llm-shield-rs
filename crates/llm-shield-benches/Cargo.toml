@@ -11,6 +11,16 @@ repository = "https://github.com/yourusername/llm-shield-rs"
 name = "llm_shield_benches"
 path = "src/lib.rs"
 
+# HTTP benchmark server binary
+[[bin]]
+name = "bench-server"
+path = "src/bin/bench_server.rs"
+
+# Throughput load testing tool
+[[bin]]
+name = "throughput-load-test"
+path = "src/bin/throughput_load_test.rs"
+
 [[bench]]
 name = "latency"
 harness = false
@@ -45,6 +55,12 @@ llm-shield-secrets = { path = "../llm-shield-secrets" }
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
 
+# HTTP server for benchmarking
+axum = "0.7"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+hyper = "1.0"
+
 # Serialization
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -65,6 +81,12 @@ chrono = { version = "0.4", features = ["serde"] }
 
 # Random generation
 rand = "0.8"
+
+# Metrics
+hdrhistogram = "7"
+
+# HTTP client for load testing
+reqwest = { version = "0.11", features = ["json"] }
 
 [dev-dependencies]
 # Benchmarking framework

@@ -1,0 +1,15 @@
+scenario,language,workers,duration_secs,mean_cpu_percent,peak_cpu_percent,min_cpu_percent,requests_per_sec,requests_per_cpu_core,cpu_efficiency_score,claim_target,claim_validated
+single_request,rust,1,60,0.0,0.0,0.0,0.0,0.0,0.0,low_cpu,PENDING
+single_request,python,1,60,0.0,0.0,0.0,0.0,0.0,0.0,low_cpu,PENDING
+sustained_load_1000rps,rust,4,60,0.0,0.0,0.0,0.0,0.0,0.0,low_cpu,PENDING
+sustained_load_1000rps,python,4,60,0.0,0.0,0.0,0.0,0.0,0.0,low_cpu,PENDING
+peak_load,rust,8,60,0.0,0.0,0.0,0.0,0.0,0.0,low_cpu,PENDING
+peak_load,python,8,60,0.0,0.0,0.0,0.0,0.0,0.0,low_cpu,PENDING
+scaling_test_1_core,rust,1,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
+scaling_test_1_core,python,1,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
+scaling_test_2_cores,rust,2,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
+scaling_test_2_cores,python,2,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
+scaling_test_4_cores,rust,4,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
+scaling_test_4_cores,python,4,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
+scaling_test_8_cores,rust,8,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
+scaling_test_8_cores,python,8,60,0.0,0.0,0.0,0.0,0.0,0.0,linear_scaling,PENDING
