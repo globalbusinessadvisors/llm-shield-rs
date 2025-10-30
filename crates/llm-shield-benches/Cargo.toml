@@ -1,0 +1,82 @@
+[package]
+name = "llm-shield-benches"
+version = "0.1.0"
+edition = "2021"
+authors = ["LLM Shield Contributors"]
+license = "MIT OR Apache-2.0"
+description = "Performance benchmarking suite for LLM Shield"
+repository = "https://github.com/yourusername/llm-shield-rs"
+
+[lib]
+name = "llm_shield_benches"
+path = "src/lib.rs"
+
+[[bench]]
+name = "latency"
+harness = false
+
+[[bench]]
+name = "throughput"
+harness = false
+
+[[bench]]
+name = "memory"
+harness = false
+
+[[bench]]
+name = "cold_start"
+harness = false
+
+[[bench]]
+name = "binary_size"
+harness = false
+
+[[bench]]
+name = "cpu_usage"
+harness = false
+
+[dependencies]
+# Core LLM Shield dependencies
+llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-scanners = { path = "../llm-shield-scanners" }
+llm-shield-secrets = { path = "../llm-shield-secrets" }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Error handling
+thiserror = "1"
+anyhow = "1"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Memory profiling
+jemalloc-ctl = "0.5"
+
+# Time utilities
+chrono = { version = "0.4", features = ["serde"] }
+
+# Random generation
+rand = "0.8"
+
+[dev-dependencies]
+# Benchmarking framework
+criterion = { version = "0.5", features = ["html_reports", "async_tokio"] }
+
+# Testing
+tokio-test = "0.4"
+approx = "0.5"
+pretty_assertions = "1"
+
+[profile.bench]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false
