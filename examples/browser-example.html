@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Shield Browser Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.valid {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+        .result.invalid {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .stats div {
+            margin: 5px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .badge.safe {
+            background: #28a745;
+            color: white;
+        }
+        .badge.warning {
+            background: #ffc107;
+            color: black;
+        }
+        .badge.danger {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ LLM Shield WASM Demo</h1>
+        <p class="subtitle">Test the security scanners in your browser</p>
+
+        <label for="input"><strong>Enter text to scan:</strong></label>
+        <textarea id="input" placeholder="Type something here... Try words like 'spam', 'scam', 'badword'">This is a test message.</textarea>
+
+        <button id="scanBtn" onclick="scanText()">Scan Text</button>
+
+        <div id="result" class="result"></div>
+
+        <div class="stats" id="stats" style="display: none;">
+            <strong>Scan Statistics:</strong>
+            <div>Scanner: <span id="scannerName"></span></div>
+            <div>Risk Score: <span id="riskScore"></span></div>
+            <div>Processing Time: <span id="processingTime"></span></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import WASM module
+        import init, { BanSubstringsScanner } from './pkg/llm_shield_wasm.js';
+
+        let scanner;
+        let startTime;
+
+        // Initialize WASM module and create scanner
+        async function initScanner() {
+            await init();
+
+            // Create scanner with example banned words
+            scanner = new BanSubstringsScanner(
+                ['spam', 'scam', 'badword', 'malicious', 'phishing'],
+                false  // case_insensitive
+            );
+
+            console.log('✅ Scanner initialized:', scanner.name());
+            document.getElementById('scanBtn').disabled = false;
+        }
+
+        // Scan text function
+        window.scanText = async function() {
+            const input = document.getElementById('input').value;
+            const resultDiv = document.getElementById('result');
+            const statsDiv = document.getElementById('stats');
+            const scanBtn = document.getElementById('scanBtn');
+
+            if (!input.trim()) {
+                resultDiv.className = 'result invalid';
+                resultDiv.textContent = '⚠️ Please enter some text to scan';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            // Disable button during scan
+            scanBtn.disabled = true;
+            scanBtn.textContent = 'Scanning...';
+
+            try {
+                startTime = performance.now();
+
+                // Perform scan
+                const result = await scanner.scan(input);
+
+                const endTime = performance.now();
+                const duration = (endTime - startTime).toFixed(2);
+
+                // Display result
+                if (result.is_valid) {
+                    resultDiv.className = 'result valid';
+                    resultDiv.innerHTML = `
+                        ✅ <strong>Text is SAFE</strong>
+                        <span class="badge safe">PASSED</span>
+                        <br><br>
+                        No security issues detected.
+                    `;
+                } else {
+                    resultDiv.className = 'result invalid';
+                    resultDiv.innerHTML = `
+                        ❌ <strong>Text is BLOCKED</strong>
+                        <span class="badge danger">FAILED</span>
+                        <br><br>
+                        Security scanner detected potential issues.
+                        <br>
+                        <strong>Sanitized:</strong> ${result.sanitized_text || 'N/A'}
+                    `;
+                }
+
+                // Display stats
+                document.getElementById('scannerName').textContent = scanner.name();
+                document.getElementById('riskScore').innerHTML = `
+                    ${result.risk_score.toFixed(2)}
+                    <span class="badge ${getRiskBadge(result.risk_score)}">${getRiskLevel(result.risk_score)}</span>
+                `;
+                document.getElementById('processingTime').textContent = `${duration}ms`;
+                statsDiv.style.display = 'block';
+
+            } catch (error) {
+                resultDiv.className = 'result invalid';
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+                resultDiv.style.display = 'block';
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.textContent = 'Scan Text';
+            }
+        }
+
+        function getRiskLevel(score) {
+            if (score >= 0.9) return 'CRITICAL';
+            if (score >= 0.7) return 'HIGH';
+            if (score >= 0.4) return 'MEDIUM';
+            if (score > 0) return 'LOW';
+            return 'NONE';
+        }
+
+        function getRiskBadge(score) {
+            if (score >= 0.7) return 'danger';
+            if (score >= 0.4) return 'warning';
+            return 'safe';
+        }
+
+        // Initialize on page load
+        initScanner().catch(err => {
+            console.error('Failed to initialize scanner:', err);
+            document.getElementById('result').className = 'result invalid';
+            document.getElementById('result').textContent = '❌ Failed to load WASM module: ' + err.message;
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

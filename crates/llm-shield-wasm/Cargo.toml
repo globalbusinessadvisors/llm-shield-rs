@@ -1,0 +1,49 @@
+[package]
+name = "llm-shield-wasm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "WebAssembly bindings for LLM Shield"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-scanners = { path = "../llm-shield-scanners" }
+
+# WASM
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+console_error_panic_hook = "0.1"
+wee_alloc = "0.4"
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde-wasm-bindgen = "0.6"
+
+# Async
+tokio = { version = "1.35", features = ["sync"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = { version = "0.3", features = [
+    "Window",
+    "Document",
+    "Storage",
+    "console",
+] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-mutable-globals"]

@@ -1,0 +1,37 @@
+[package]
+name = "llm-shield-models"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "ML model infrastructure for LLM Shield"
+
+[dependencies]
+# Core dependencies
+llm-shield-core = { path = "../llm-shield-core" }
+
+# Async
+tokio = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# ML/AI
+ort = { workspace = true }
+tokenizers = { workspace = true }
+ndarray = { workspace = true }
+
+# Utilities
+tracing = { workspace = true }
+once_cell = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }

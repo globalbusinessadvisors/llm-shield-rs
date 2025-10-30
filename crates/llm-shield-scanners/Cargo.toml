@@ -1,0 +1,40 @@
+[package]
+name = "llm-shield-scanners"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Security scanners for LLM Shield toolkit"
+
+[dependencies]
+llm-shield-core = { path = "../llm-shield-core" }
+
+# Async
+async-trait = { workspace = true }
+tokio = { workspace = true }
+futures = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Text processing
+regex = { workspace = true }
+unicode-normalization = { workspace = true }
+unicode-segmentation = { workspace = true }
+aho-corasick = "1.1"
+
+# Observability
+tracing = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+
+[[bench]]
+name = "scanner_benchmarks"
+harness = false
