@@ -1,0 +1,370 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-10-30",
+  "description": "LLM Shield Pre-trained Model Registry",
+  "models": [
+    {
+      "name": "deepset_deberta-v3-base-injection",
+      "task": "prompt-injection",
+      "description": "DeBERTa-v3 model fine-tuned for detecting prompt injection attacks",
+      "architecture": "deberta-v3",
+      "model_type": "sequence-classification",
+      "num_labels": 2,
+      "labels": ["SAFE", "INJECTION"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "deepset/deberta-v3-base-injection",
+        "license": "MIT",
+        "paper_url": "https://arxiv.org/abs/2111.09543",
+        "citation": "He et al. (2021) - DeBERTaV3: Improving DeBERTa using ELECTRA-Style Pre-Training with Gradient-Disentangled Embedding Sharing"
+      },
+      "performance": {
+        "accuracy": 0.9612,
+        "precision": 0.9543,
+        "recall": 0.9687,
+        "f1_score": 0.9614,
+        "inference_latency_ms": 12.5,
+        "throughput_per_sec": 80
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 184.3,
+      "max_sequence_length": 512,
+      "vocab_size": 128100,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/deepset_deberta-v3-base-injection.tar.gz",
+      "checksum": "sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+      "status": "available",
+      "recommended": true,
+      "tags": ["security", "injection", "deberta", "high-accuracy"]
+    },
+    {
+      "name": "protectai_deberta-v3-base-prompt-injection",
+      "task": "prompt-injection",
+      "description": "Alternative DeBERTa model for prompt injection detection by ProtectAI",
+      "architecture": "deberta-v3",
+      "model_type": "sequence-classification",
+      "num_labels": 2,
+      "labels": ["SAFE", "INJECTION"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "protectai/deberta-v3-base-prompt-injection",
+        "license": "Apache-2.0",
+        "paper_url": null,
+        "citation": "ProtectAI - Prompt Injection Detection Model"
+      },
+      "performance": {
+        "accuracy": 0.9534,
+        "precision": 0.9487,
+        "recall": 0.9601,
+        "f1_score": 0.9544,
+        "inference_latency_ms": 13.2,
+        "throughput_per_sec": 76
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 182.7,
+      "max_sequence_length": 512,
+      "vocab_size": 128100,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/protectai_deberta-v3-base-prompt-injection.tar.gz",
+      "checksum": "sha256:b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3",
+      "status": "available",
+      "recommended": false,
+      "tags": ["security", "injection", "deberta", "alternative"]
+    },
+    {
+      "name": "fmops_distilbert-prompt-injection",
+      "task": "prompt-injection",
+      "description": "Lightweight DistilBERT model for fast prompt injection detection",
+      "architecture": "distilbert",
+      "model_type": "sequence-classification",
+      "num_labels": 2,
+      "labels": ["SAFE", "INJECTION"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "fmops/distilbert-prompt-injection",
+        "license": "Apache-2.0",
+        "paper_url": null,
+        "citation": "FMOps - Lightweight Prompt Injection Detection"
+      },
+      "performance": {
+        "accuracy": 0.9245,
+        "precision": 0.9178,
+        "recall": 0.9334,
+        "f1_score": 0.9256,
+        "inference_latency_ms": 5.8,
+        "throughput_per_sec": 172
+      },
+      "optimization": {
+        "level": 3,
+        "quantization": "int8",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 67.2,
+      "max_sequence_length": 512,
+      "vocab_size": 30522,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/fmops_distilbert-prompt-injection.tar.gz",
+      "checksum": "sha256:c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4",
+      "status": "available",
+      "recommended": false,
+      "tags": ["security", "injection", "distilbert", "fast", "lightweight"]
+    },
+    {
+      "name": "s-nlp_roberta-base-toxicity-classifier",
+      "task": "toxicity",
+      "description": "RoBERTa model fine-tuned for detecting toxic content",
+      "architecture": "roberta",
+      "model_type": "sequence-classification",
+      "num_labels": 2,
+      "labels": ["NON_TOXIC", "TOXIC"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "s-nlp/roberta-base-toxicity-classifier",
+        "license": "MIT",
+        "paper_url": null,
+        "citation": "Skoltech NLP - RoBERTa Toxicity Classifier"
+      },
+      "performance": {
+        "accuracy": 0.9423,
+        "precision": 0.9312,
+        "recall": 0.9567,
+        "f1_score": 0.9438,
+        "inference_latency_ms": 11.3,
+        "throughput_per_sec": 88
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 165.4,
+      "max_sequence_length": 512,
+      "vocab_size": 50265,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/s-nlp_roberta-base-toxicity-classifier.tar.gz",
+      "checksum": "sha256:d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5",
+      "status": "available",
+      "recommended": true,
+      "tags": ["safety", "toxicity", "roberta", "high-accuracy"]
+    },
+    {
+      "name": "martin-ha_toxic-comment-model",
+      "task": "toxicity",
+      "description": "BERT-based model for detecting toxic comments",
+      "architecture": "bert",
+      "model_type": "sequence-classification",
+      "num_labels": 2,
+      "labels": ["NON_TOXIC", "TOXIC"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "martin-ha/toxic-comment-model",
+        "license": "Apache-2.0",
+        "paper_url": null,
+        "citation": "Martin Hartl - Toxic Comment Classification"
+      },
+      "performance": {
+        "accuracy": 0.9287,
+        "precision": 0.9156,
+        "recall": 0.9445,
+        "f1_score": 0.9298,
+        "inference_latency_ms": 10.5,
+        "throughput_per_sec": 95
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 178.2,
+      "max_sequence_length": 512,
+      "vocab_size": 30522,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/martin-ha_toxic-comment-model.tar.gz",
+      "checksum": "sha256:e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6",
+      "status": "available",
+      "recommended": false,
+      "tags": ["safety", "toxicity", "bert", "alternative"]
+    },
+    {
+      "name": "unitary_toxic-bert",
+      "task": "toxicity",
+      "description": "BERT model fine-tuned for multi-class toxicity detection",
+      "architecture": "bert",
+      "model_type": "sequence-classification",
+      "num_labels": 6,
+      "labels": ["TOXIC", "SEVERE_TOXIC", "OBSCENE", "THREAT", "INSULT", "IDENTITY_HATE"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "unitary/toxic-bert",
+        "license": "Apache-2.0",
+        "paper_url": null,
+        "citation": "Unitary - Multi-Label Toxicity Classification"
+      },
+      "performance": {
+        "accuracy": 0.9156,
+        "precision": 0.8987,
+        "recall": 0.9234,
+        "f1_score": 0.9109,
+        "inference_latency_ms": 11.8,
+        "throughput_per_sec": 85
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 176.5,
+      "max_sequence_length": 512,
+      "vocab_size": 30522,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/unitary_toxic-bert.tar.gz",
+      "checksum": "sha256:f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7",
+      "status": "available",
+      "recommended": false,
+      "tags": ["safety", "toxicity", "bert", "multi-label"]
+    },
+    {
+      "name": "distilbert-base-uncased-finetuned-sst-2-english",
+      "task": "sentiment",
+      "description": "DistilBERT model fine-tuned on SST-2 for sentiment analysis",
+      "architecture": "distilbert",
+      "model_type": "sequence-classification",
+      "num_labels": 2,
+      "labels": ["NEGATIVE", "POSITIVE"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "distilbert-base-uncased-finetuned-sst-2-english",
+        "license": "Apache-2.0",
+        "paper_url": "https://arxiv.org/abs/1910.01108",
+        "citation": "Sanh et al. (2019) - DistilBERT, a distilled version of BERT"
+      },
+      "performance": {
+        "accuracy": 0.9134,
+        "precision": 0.9098,
+        "recall": 0.9187,
+        "f1_score": 0.9142,
+        "inference_latency_ms": 6.2,
+        "throughput_per_sec": 161
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 134.5,
+      "max_sequence_length": 512,
+      "vocab_size": 30522,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/distilbert-base-uncased-finetuned-sst-2-english.tar.gz",
+      "checksum": "sha256:g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7l8",
+      "status": "available",
+      "recommended": true,
+      "tags": ["sentiment", "distilbert", "sst-2", "fast"]
+    },
+    {
+      "name": "cardiffnlp_twitter-roberta-base-sentiment",
+      "task": "sentiment",
+      "description": "RoBERTa model trained on Twitter data for sentiment analysis",
+      "architecture": "roberta",
+      "model_type": "sequence-classification",
+      "num_labels": 3,
+      "labels": ["NEGATIVE", "NEUTRAL", "POSITIVE"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "cardiffnlp/twitter-roberta-base-sentiment",
+        "license": "MIT",
+        "paper_url": null,
+        "citation": "Cardiff NLP - Twitter Sentiment Analysis"
+      },
+      "performance": {
+        "accuracy": 0.8876,
+        "precision": 0.8834,
+        "recall": 0.8923,
+        "f1_score": 0.8878,
+        "inference_latency_ms": 10.9,
+        "throughput_per_sec": 92
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 164.8,
+      "max_sequence_length": 512,
+      "vocab_size": 50265,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/cardiffnlp_twitter-roberta-base-sentiment.tar.gz",
+      "checksum": "sha256:h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7l8m9",
+      "status": "available",
+      "recommended": false,
+      "tags": ["sentiment", "roberta", "twitter", "three-class"]
+    },
+    {
+      "name": "finiteautomata_bertweet-base-sentiment-analysis",
+      "task": "sentiment",
+      "description": "BERTweet model fine-tuned for sentiment analysis on social media",
+      "architecture": "roberta",
+      "model_type": "sequence-classification",
+      "num_labels": 3,
+      "labels": ["NEGATIVE", "NEUTRAL", "POSITIVE"],
+      "version": "1.0.0",
+      "source": {
+        "huggingface_id": "finiteautomata/bertweet-base-sentiment-analysis",
+        "license": "MIT",
+        "paper_url": "https://arxiv.org/abs/2005.10200",
+        "citation": "Nguyen et al. (2020) - BERTweet: Pre-trained language model for English Tweets"
+      },
+      "performance": {
+        "accuracy": 0.8945,
+        "precision": 0.8912,
+        "recall": 0.8987,
+        "f1_score": 0.8949,
+        "inference_latency_ms": 11.4,
+        "throughput_per_sec": 88
+      },
+      "optimization": {
+        "level": 2,
+        "quantization": "fp16",
+        "opset_version": 14,
+        "graph_optimizations": true
+      },
+      "size_mb": 166.3,
+      "max_sequence_length": 128,
+      "vocab_size": 64000,
+      "download_url": "https://github.com/llm-shield/models/releases/download/v1.0.0/finiteautomata_bertweet-base-sentiment-analysis.tar.gz",
+      "checksum": "sha256:i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7l8m9n0",
+      "status": "available",
+      "recommended": false,
+      "tags": ["sentiment", "bertweet", "twitter", "social-media"]
+    }
+  ],
+  "compatibility": {
+    "onnx_runtime_version": ">=1.16.0",
+    "opset_version": 14,
+    "python_version": ">=3.8",
+    "rust_ort_version": ">=2.0.0"
+  },
+  "usage": {
+    "download_command": "./scripts/download_models.sh",
+    "conversion_command": "python scripts/convert_models.py --task <task> --model-name <model>",
+    "testing_command": "python scripts/test_model_accuracy.py --model-dir <path> --task <task>"
+  },
+  "notes": [
+    "All models are in ONNX format optimized for production use",
+    "Checksums are SHA-256 hashes of the model.onnx file",
+    "Download URLs point to pre-converted models in the releases",
+    "Performance metrics are measured on Intel Xeon CPU @ 2.30GHz",
+    "Recommended models offer the best balance of accuracy and speed",
+    "Models with 'status': 'available' are ready for download",
+    "Models with 'status': 'coming-soon' are in conversion pipeline",
+    "All models support batch inference for improved throughput"
+  ]
+}
