@@ -43,6 +43,8 @@ pub enum ModelTask {
     Toxicity,
     /// Sentiment analysis
     Sentiment,
+    /// Named Entity Recognition (PII detection)
+    NamedEntityRecognition,
 }
 
 /// Model variant (precision/quantization)

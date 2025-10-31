@@ -12,7 +12,7 @@ pub mod types;
 
 pub use model_loader::{ModelLoader, ModelConfig, ModelType};
 pub use tokenizer::{TokenizerWrapper, TokenizerConfig, Encoding};
-pub use inference::{InferenceEngine, InferenceResult, PostProcessing};
+pub use inference::{InferenceEngine, InferenceResult, TokenPrediction, PostProcessing};
 pub use registry::{ModelRegistry, ModelTask, ModelVariant, ModelMetadata};
 pub use cache::{ResultCache, CacheConfig, CacheStats};
 pub use types::{

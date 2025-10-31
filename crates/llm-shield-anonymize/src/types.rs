@@ -27,6 +27,8 @@ pub enum EntityType {
     Passport,
     Address,
     PostalCode,
+    Username,
+    Password,
 }
 
 impl EntityType {
@@ -54,6 +56,8 @@ impl EntityType {
             EntityType::Passport => "PASSPORT",
             EntityType::Address => "ADDRESS",
             EntityType::PostalCode => "POSTAL_CODE",
+            EntityType::Username => "USERNAME",
+            EntityType::Password => "PASSWORD",
         }
     }
 }

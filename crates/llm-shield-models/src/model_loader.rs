@@ -52,6 +52,8 @@ pub enum ModelType {
     Toxicity,
     /// Sentiment analysis
     Sentiment,
+    /// Named Entity Recognition (PII detection)
+    NamedEntityRecognition,
 }
 
 /// Conversion from ModelTask to ModelType
@@ -61,6 +63,7 @@ impl From<ModelTask> for ModelType {
             ModelTask::PromptInjection => ModelType::PromptInjection,
             ModelTask::Toxicity => ModelType::Toxicity,
             ModelTask::Sentiment => ModelType::Sentiment,
+            ModelTask::NamedEntityRecognition => ModelType::NamedEntityRecognition,
         }
     }
 }
@@ -72,6 +75,7 @@ impl From<ModelType> for ModelTask {
             ModelType::PromptInjection => ModelTask::PromptInjection,
             ModelType::Toxicity => ModelTask::Toxicity,
             ModelType::Sentiment => ModelTask::Sentiment,
+            ModelType::NamedEntityRecognition => ModelTask::NamedEntityRecognition,
         }
     }
 }
@@ -503,6 +507,10 @@ mod tests {
             ModelType::from(ModelTask::Sentiment),
             ModelType::Sentiment
         ));
+        assert!(matches!(
+            ModelType::from(ModelTask::NamedEntityRecognition),
+            ModelType::NamedEntityRecognition
+        ));
 
         // ModelType -> ModelTask
         assert!(matches!(
@@ -516,6 +524,10 @@ mod tests {
         assert!(matches!(
             ModelTask::from(ModelType::Sentiment),
             ModelTask::Sentiment
+        ));
+        assert!(matches!(
+            ModelTask::from(ModelType::NamedEntityRecognition),
+            ModelTask::NamedEntityRecognition
         ));
     }
 

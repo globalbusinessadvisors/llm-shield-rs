@@ -100,7 +100,7 @@ impl Default for TokenizerConfig {
 
 /// Encoding result from tokenization
 ///
-/// Contains the token IDs and attention mask needed for model inference.
+/// Contains the token IDs, attention mask, and character offsets needed for model inference.
 #[derive(Debug, Clone)]
 pub struct Encoding {
     /// Token IDs (vocabulary indices)
@@ -108,14 +108,35 @@ pub struct Encoding {
 
     /// Attention mask (1 for real tokens, 0 for padding)
     pub attention_mask: Vec<u32>,
+
+    /// Character offsets in original text for each token
+    /// (start_char, end_char) for each token
+    /// Special tokens (CLS, SEP, PAD) have offset (0, 0)
+    pub offsets: Vec<(usize, usize)>,
 }
 
 impl Encoding {
     /// Create a new encoding
     pub fn new(input_ids: Vec<u32>, attention_mask: Vec<u32>) -> Self {
+        // Create default offsets (all zeros for backward compatibility)
+        let offsets = vec![(0, 0); input_ids.len()];
         Self {
             input_ids,
             attention_mask,
+            offsets,
+        }
+    }
+
+    /// Create a new encoding with offsets
+    pub fn with_offsets(
+        input_ids: Vec<u32>,
+        attention_mask: Vec<u32>,
+        offsets: Vec<(usize, usize)>,
+    ) -> Self {
+        Self {
+            input_ids,
+            attention_mask,
+            offsets,
         }
     }
 
@@ -308,7 +329,14 @@ impl TokenizerWrapper {
         let input_ids = encoding.get_ids().to_vec();
         let attention_mask = encoding.get_attention_mask().to_vec();
 
-        Ok(Encoding::new(input_ids, attention_mask))
+        // Extract character offsets
+        let offsets: Vec<(usize, usize)> = encoding
+            .get_offsets()
+            .iter()
+            .map(|offset| (offset.0, offset.1))
+            .collect();
+
+        Ok(Encoding::with_offsets(input_ids, attention_mask, offsets))
     }
 
     /// Encode multiple texts in batch
@@ -356,7 +384,12 @@ impl TokenizerWrapper {
             .map(|enc| {
                 let input_ids = enc.get_ids().to_vec();
                 let attention_mask = enc.get_attention_mask().to_vec();
-                Encoding::new(input_ids, attention_mask)
+                let offsets: Vec<(usize, usize)> = enc
+                    .get_offsets()
+                    .iter()
+                    .map(|offset| (offset.0, offset.1))
+                    .collect();
+                Encoding::with_offsets(input_ids, attention_mask, offsets)
             })
             .collect();
 

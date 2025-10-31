@@ -1,10 +1,11 @@
 //! Request DTOs
 
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use validator::Validate;
 
 /// Scan prompt request
-#[derive(Debug, Clone, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ScanPromptRequest {
     /// Prompt text to scan
@@ -22,7 +23,7 @@ pub struct ScanPromptRequest {
 }
 
 /// Scan output request
-#[derive(Debug, Clone, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ScanOutputRequest {
     /// Original prompt (for context)

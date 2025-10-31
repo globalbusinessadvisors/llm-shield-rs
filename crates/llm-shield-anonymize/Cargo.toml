@@ -9,6 +9,7 @@ description = "Anonymization for LLM Shield"
 
 [dependencies]
 llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-models = { path = "../llm-shield-models" }
 tokio = { workspace = true }
 serde = { workspace = true }
 thiserror = { workspace = true }

@@ -68,6 +68,18 @@ pub enum Error {
     /// Internal errors (should not happen in production)
     #[error("Internal error: {0}")]
     Internal(String),
+
+    /// Authentication errors
+    #[error("Authentication error: {0}")]
+    Auth(String),
+
+    /// Unauthorized access
+    #[error("Unauthorized: {0}")]
+    Unauthorized(String),
+
+    /// Resource not found
+    #[error("Not found: {0}")]
+    NotFound(String),
 }
 
 impl Error {
@@ -128,6 +140,21 @@ impl Error {
         Self::Internal(message.into())
     }
 
+    /// Create an authentication error
+    pub fn auth<S: Into<String>>(message: S) -> Self {
+        Self::Auth(message.into())
+    }
+
+    /// Create an unauthorized error
+    pub fn unauthorized<S: Into<String>>(message: S) -> Self {
+        Self::Unauthorized(message.into())
+    }
+
+    /// Create a not found error
+    pub fn not_found<S: Into<String>>(message: S) -> Self {
+        Self::NotFound(message.into())
+    }
+
     /// Check if error is retryable
     pub fn is_retryable(&self) -> bool {
         matches!(
@@ -149,6 +176,9 @@ impl Error {
             Error::Timeout(_) => "timeout",
             Error::ResourceExhausted(_) => "resource_exhausted",
             Error::Internal(_) => "internal",
+            Error::Auth(_) => "auth",
+            Error::Unauthorized(_) => "unauthorized",
+            Error::NotFound(_) => "not_found",
         }
     }
 }

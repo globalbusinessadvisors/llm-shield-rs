@@ -37,6 +37,85 @@ pub enum PostProcessing {
     Sigmoid,
 }
 
+/// Prediction for a single token in token classification
+#[derive(Debug, Clone, PartialEq)]
+pub struct TokenPrediction {
+    /// Token ID from vocabulary
+    pub token_id: u32,
+
+    /// Predicted label (e.g., "B-PERSON", "I-EMAIL", "O")
+    pub predicted_label: String,
+
+    /// Index of predicted class
+    pub predicted_class: usize,
+
+    /// Confidence score for predicted class (0.0-1.0)
+    pub confidence: f32,
+
+    /// Probability distribution over all classes (after softmax)
+    pub all_scores: Vec<f32>,
+}
+
+impl TokenPrediction {
+    /// Create a new token prediction
+    pub fn new(
+        token_id: u32,
+        predicted_label: String,
+        predicted_class: usize,
+        confidence: f32,
+        all_scores: Vec<f32>,
+    ) -> Self {
+        Self {
+            token_id,
+            predicted_label,
+            predicted_class,
+            confidence,
+            all_scores,
+        }
+    }
+
+    /// Validate invariants
+    pub fn validate(&self) -> Result<(), String> {
+        // Confidence in valid range
+        if self.confidence < 0.0 || self.confidence > 1.0 {
+            return Err(format!("Invalid confidence: {}", self.confidence));
+        }
+
+        // Predicted class is valid index
+        if self.predicted_class >= self.all_scores.len() {
+            return Err(format!(
+                "Invalid predicted_class {} for {} scores",
+                self.predicted_class,
+                self.all_scores.len()
+            ));
+        }
+
+        // Confidence matches all_scores
+        let expected_confidence = self.all_scores[self.predicted_class];
+        if (self.confidence - expected_confidence).abs() > 0.001 {
+            return Err(format!(
+                "Confidence mismatch: {} != {}",
+                self.confidence, expected_confidence
+            ));
+        }
+
+        // All scores in valid range
+        for (i, &score) in self.all_scores.iter().enumerate() {
+            if score < 0.0 || score > 1.0 {
+                return Err(format!("Invalid score at index {}: {}", i, score));
+            }
+        }
+
+        // Sum of scores is approximately 1.0 (softmax invariant)
+        let sum: f32 = self.all_scores.iter().sum();
+        if (sum - 1.0).abs() > 0.01 {
+            return Err(format!("Scores don't sum to 1.0: {}", sum));
+        }
+
+        Ok(())
+    }
+}
+
 /// Inference result with classification predictions
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct InferenceResult {
@@ -494,6 +573,196 @@ impl InferenceEngine {
     #[allow(dead_code)]
     fn sigmoid(&self, logits: &[f32]) -> Vec<f32> {
         Self::sigmoid_static(logits)
+    }
+
+    /// Run token-level classification inference (for NER/token classification)
+    ///
+    /// # Arguments
+    ///
+    /// * `input_ids` - Token IDs from tokenizer
+    /// * `attention_mask` - Attention mask (1=real token, 0=padding)
+    /// * `labels` - BIO tag labels (e.g., ["O", "B-PERSON", "I-PERSON", ...])
+    ///
+    /// # Returns
+    ///
+    /// Vector of predictions, one per input token
+    ///
+    /// # Errors
+    ///
+    /// - Model inference failure
+    /// - Invalid tensor shapes
+    /// - Label count mismatch
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore
+    /// use llm_shield_models::InferenceEngine;
+    ///
+    /// let engine = InferenceEngine::new(session);
+    /// let labels = vec!["O", "B-PERSON", "I-PERSON"];
+    ///
+    /// let predictions = engine.infer_token_classification(
+    ///     &input_ids,
+    ///     &attention_mask,
+    ///     &labels
+    /// ).await?;
+    ///
+    /// for pred in predictions {
+    ///     println!("{}: {:.2}", pred.predicted_label, pred.confidence);
+    /// }
+    /// ```
+    pub async fn infer_token_classification(
+        &self,
+        input_ids: &[u32],
+        attention_mask: &[u32],
+        labels: &[String],
+    ) -> crate::Result<Vec<TokenPrediction>> {
+        // Validation
+        if input_ids.is_empty() {
+            return Err(Error::model("input_ids cannot be empty"));
+        }
+        if input_ids.len() != attention_mask.len() {
+            return Err(Error::model(format!(
+                "input_ids length ({}) != attention_mask length ({})",
+                input_ids.len(),
+                attention_mask.len()
+            )));
+        }
+        if labels.is_empty() {
+            return Err(Error::model("labels cannot be empty"));
+        }
+
+        // Run inference in blocking thread pool to avoid blocking async runtime
+        let session = Arc::clone(&self.session);
+        let input_ids = input_ids.to_vec();
+        let attention_mask = attention_mask.to_vec();
+        let labels = labels.to_vec();
+
+        tokio::task::spawn_blocking(move || {
+            let mut session_guard = session.lock()
+                .map_err(|e| Error::model(format!("Failed to lock session: {}", e)))?;
+            Self::infer_token_classification_sync(
+                &mut *session_guard,
+                &input_ids,
+                &attention_mask,
+                &labels
+            )
+        })
+        .await
+        .map_err(|e| Error::model(format!("Async inference task failed: {}", e)))?
+    }
+
+    /// Internal synchronous token classification implementation
+    fn infer_token_classification_sync(
+        session: &mut Session,
+        input_ids: &[u32],
+        attention_mask: &[u32],
+        labels: &[String],
+    ) -> crate::Result<Vec<TokenPrediction>> {
+        // Convert to i64 for ONNX
+        let input_ids_i64: Vec<i64> = input_ids.iter().map(|&x| x as i64).collect();
+        let attention_mask_i64: Vec<i64> = attention_mask.iter().map(|&x| x as i64).collect();
+
+        let batch_size = 1;
+        let seq_length = input_ids.len();
+
+        // Create input arrays [batch_size, seq_length]
+        let input_ids_array =
+            Array2::from_shape_vec((batch_size, seq_length), input_ids_i64)
+                .map_err(|e| Error::model(format!("Failed to create input array: {}", e)))?;
+
+        let attention_mask_array =
+            Array2::from_shape_vec((batch_size, seq_length), attention_mask_i64)
+                .map_err(|e| Error::model(format!("Failed to create attention mask array: {}", e)))?;
+
+        // Create ONNX values
+        let input_ids_value = ort::value::Value::from_array(input_ids_array)
+            .map_err(|e| Error::model(format!("Failed to create input_ids value: {}", e)))?;
+        let attention_mask_value = ort::value::Value::from_array(attention_mask_array)
+            .map_err(|e| Error::model(format!("Failed to create attention_mask value: {}", e)))?;
+
+        // Run inference
+        let outputs = session
+            .run(ort::inputs![
+                "input_ids" => input_ids_value,
+                "attention_mask" => attention_mask_value,
+            ])
+            .map_err(|e| Error::model(format!("Inference failed: {}", e)))?;
+
+        // Extract logits [batch_size, seq_length, num_labels]
+        let logits = outputs["logits"]
+            .try_extract_tensor::<f32>()
+            .map_err(|e| Error::model(format!("Failed to extract logits: {}", e)))?;
+
+        // logits is (shape, data)
+        let (shape, data) = logits;
+
+        // Validate shape: should be [batch_size, seq_length, num_labels]
+        if shape.len() != 3 {
+            return Err(Error::model(format!(
+                "Expected 3D logits tensor, got shape with {} dimensions",
+                shape.len()
+            )));
+        }
+
+        let actual_batch = shape[0] as usize;
+        let actual_seq_len = shape[1] as usize;
+        let num_labels = shape[2] as usize;
+
+        if actual_batch != batch_size {
+            return Err(Error::model(format!(
+                "Batch size mismatch: expected {}, got {}",
+                batch_size, actual_batch
+            )));
+        }
+
+        if actual_seq_len != seq_length {
+            return Err(Error::model(format!(
+                "Sequence length mismatch: expected {}, got {}",
+                seq_length, actual_seq_len
+            )));
+        }
+
+        if num_labels != labels.len() {
+            return Err(Error::model(format!(
+                "Label count mismatch: model has {} labels, provided {}",
+                num_labels,
+                labels.len()
+            )));
+        }
+
+        // Process each token
+        let mut predictions = Vec::with_capacity(seq_length);
+
+        for token_idx in 0..seq_length {
+            // Extract logits for this token
+            let start_idx = token_idx * num_labels;
+            let end_idx = start_idx + num_labels;
+            let token_logits: Vec<f32> = data[start_idx..end_idx].to_vec();
+
+            // Apply softmax
+            let scores = Self::softmax_static(&token_logits);
+
+            // Find predicted class
+            let (predicted_class, max_score) = scores
+                .iter()
+                .enumerate()
+                .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+                .map(|(idx, &score)| (idx, score))
+                .unwrap_or((0, 0.0));
+
+            let predicted_label = labels[predicted_class].clone();
+
+            predictions.push(TokenPrediction::new(
+                input_ids[token_idx],
+                predicted_label,
+                predicted_class,
+                max_score,
+                scores,
+            ));
+        }
+
+        Ok(predictions)
     }
 }
 

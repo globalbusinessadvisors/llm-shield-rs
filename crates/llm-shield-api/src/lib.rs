@@ -3,12 +3,14 @@
 //! Production-grade REST API exposing LLM Shield scanners and anonymization
 //! capabilities via HTTP with enterprise-grade security, observability, and performance.
 
+pub mod auth;
 pub mod config;
 pub mod extractors;
 pub mod handlers;
 pub mod middleware;
 pub mod models;
 pub mod observability;
+pub mod rate_limiting;
 pub mod router;
 pub mod server;
 pub mod services;
