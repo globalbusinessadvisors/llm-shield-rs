@@ -1,0 +1,149 @@
+{
+  "name": "@llm-shield/core",
+  "version": "0.1.0",
+  "description": "Enterprise-grade LLM security toolkit for JavaScript/TypeScript",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "browser": "./dist/browser/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": {
+        "import": "./dist/node/index.mjs",
+        "require": "./dist/node/index.cjs"
+      },
+      "browser": {
+        "import": "./dist/browser/index.mjs",
+        "require": "./dist/browser/index.cjs"
+      },
+      "default": "./dist/index.mjs"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.ts",
+      "import": "./dist/node/index.mjs",
+      "require": "./dist/node/index.cjs"
+    },
+    "./browser": {
+      "types": "./dist/browser/index.d.ts",
+      "import": "./dist/browser/index.mjs"
+    },
+    "./edge": {
+      "types": "./dist/edge/index.d.ts",
+      "import": "./dist/edge/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "llm",
+    "security",
+    "wasm",
+    "webassembly",
+    "rust",
+    "prompt-injection",
+    "toxicity",
+    "ai-security",
+    "content-moderation",
+    "data-protection",
+    "pii-detection",
+    "typescript"
+  ],
+  "author": "LLM Shield Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/llm-shield/llm-shield-rs.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/llm-shield/llm-shield-rs/issues"
+  },
+  "homepage": "https://llm-shield.dev",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "build": "npm run build:wasm && npm run build:rollup && npm run build:types",
+    "build:wasm": "bash scripts/build-wasm.sh",
+    "build:rollup": "rollup -c",
+    "build:types": "tsc --emitDeclarationOnly --declaration --declarationMap",
+    "build:watch": "rollup -c -w",
+    "build:analyze": "rollup -c --environment ANALYZE",
+    "dev": "rollup -c -w",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "vitest run --dir tests/unit",
+    "test:integration": "vitest run --dir tests/integration",
+    "test:browser": "playwright test",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ci": "vitest run --coverage --reporter=verbose",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
+    "size": "size-limit",
+    "size:why": "size-limit --why",
+    "validate": "npm run typecheck && npm run lint && npm run test",
+    "validate:ci": "npm run typecheck && npm run lint && npm run test:ci && npm run size",
+    "clean": "rm -rf dist coverage .turbo node_modules/.cache",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "prepublishOnly": "npm run validate && npm run build",
+    "semantic-release": "semantic-release",
+    "release:dry": "semantic-release --dry-run"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@rollup/plugin-wasm": "^6.2.2",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/npm": "^11.0.2",
+    "@semantic-release/release-notes-generator": "^12.1.0",
+    "@size-limit/preset-small-lib": "^11.0.1",
+    "@types/node": "^20.10.6",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
+    "@vitest/coverage-v8": "^1.1.1",
+    "@vitest/ui": "^1.1.1",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
+    "eslint": "^8.56.0",
+    "playwright": "^1.40.1",
+    "prettier": "^3.1.1",
+    "rollup": "^4.9.4",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-filesize": "^10.0.0",
+    "semantic-release": "^22.0.12",
+    "size-limit": "^11.0.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vitepress": "^1.0.0-rc.36",
+    "vitest": "^1.1.1"
+  },
+  "peerDependencies": {},
+  "size-limit": [
+    {
+      "path": "dist/index.mjs",
+      "limit": "20 KB",
+      "gzip": true
+    },
+    {
+      "path": "dist/browser/index.mjs",
+      "limit": "25 KB",
+      "gzip": true
+    }
+  ]
+}

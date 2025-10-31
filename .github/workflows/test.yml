@@ -1,0 +1,198 @@
+name: Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} with Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [16, 18, 20]
+        exclude:
+          # Reduce matrix for faster builds
+          - os: macos-latest
+            node: 16
+          - os: windows-latest
+            node: 16
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Build WASM
+        working-directory: packages/core
+        run: |
+          chmod +x scripts/build-wasm.sh
+          ./scripts/build-wasm.sh
+
+      - name: Build package
+        working-directory: packages/core
+        run: npm run build
+
+      - name: Run unit tests
+        working-directory: packages/core
+        run: npm run test:unit
+
+      - name: Run integration tests
+        working-directory: packages/core
+        run: npm run test:integration
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        if: matrix.os == 'ubuntu-latest' && matrix.node == 20
+        with:
+          file: ./packages/core/coverage/coverage-final.json
+          flags: unittests
+          name: codecov-umbrella
+
+  bundle-size:
+    name: Check Bundle Size
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build WASM
+        working-directory: packages/core
+        run: |
+          chmod +x scripts/build-wasm.sh
+          ./scripts/build-wasm.sh
+
+      - name: Build package
+        working-directory: packages/core
+        run: npm run build
+
+      - name: Check bundle size
+        working-directory: packages/core
+        run: npm run size
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  browser-tests:
+    name: Browser Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        working-directory: packages/core
+        run: npx playwright install --with-deps
+
+      - name: Build WASM
+        working-directory: packages/core
+        run: |
+          chmod +x scripts/build-wasm.sh
+          ./scripts/build-wasm.sh
+
+      - name: Build package
+        working-directory: packages/core
+        run: npm run build
+
+      - name: Run browser tests
+        working-directory: packages/core
+        run: npm run test:browser
+
+      - name: Upload browser test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: packages/core/playwright-report/
+          retention-days: 30
