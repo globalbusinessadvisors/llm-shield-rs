@@ -1,0 +1,26 @@
+{
+  "Name": "LLM Shield Key Vault Access",
+  "Description": "Custom role for LLM Shield to access Azure Key Vault secrets",
+  "IsCustom": true,
+  "Actions": [
+    "Microsoft.KeyVault/vaults/read",
+    "Microsoft.KeyVault/vaults/secrets/read",
+    "Microsoft.KeyVault/vaults/secrets/getSecret/action",
+    "Microsoft.KeyVault/vaults/secrets/readMetadata/action",
+    "Microsoft.KeyVault/vaults/secrets/write",
+    "Microsoft.KeyVault/vaults/secrets/delete",
+    "Microsoft.KeyVault/vaults/secrets/recover/action",
+    "Microsoft.KeyVault/vaults/secrets/backup/action",
+    "Microsoft.KeyVault/vaults/secrets/restore/action"
+  ],
+  "NotActions": [],
+  "DataActions": [
+    "Microsoft.KeyVault/vaults/secrets/read",
+    "Microsoft.KeyVault/vaults/secrets/write",
+    "Microsoft.KeyVault/vaults/secrets/delete"
+  ],
+  "NotDataActions": [],
+  "AssignableScopes": [
+    "/subscriptions/{subscription-id}"
+  ]
+}

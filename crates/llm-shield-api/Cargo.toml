@@ -59,6 +59,12 @@ llm-shield-scanners = { path = "../llm-shield-scanners" }
 llm-shield-models = { path = "../llm-shield-models" }
 llm-shield-anonymize = { path = "../llm-shield-anonymize" }
 
+# Cloud integrations (optional)
+llm-shield-cloud = { path = "../llm-shield-cloud", optional = true }
+llm-shield-cloud-aws = { path = "../llm-shield-cloud-aws", optional = true }
+llm-shield-cloud-gcp = { path = "../llm-shield-cloud-gcp", optional = true }
+llm-shield-cloud-azure = { path = "../llm-shield-cloud-azure", optional = true }
+
 [dev-dependencies]
 # Testing
 tokio-test = "0.4"
@@ -77,6 +83,11 @@ harness = false
 [features]
 default = []
 redis = ["dep:redis"]
+cloud = ["dep:llm-shield-cloud"]
+cloud-aws = ["cloud", "dep:llm-shield-cloud-aws"]
+cloud-gcp = ["cloud", "dep:llm-shield-cloud-gcp"]
+cloud-azure = ["cloud", "dep:llm-shield-cloud-azure"]
+cloud-all = ["cloud-aws", "cloud-gcp", "cloud-azure"]
 
 # Optional dependencies for advanced features
 [dependencies.redis]

@@ -1,0 +1,82 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "LLMShieldS3BucketAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation",
+        "s3:GetBucketVersioning"
+      ],
+      "Resource": [
+        "arn:aws:s3:::llm-shield-*"
+      ]
+    },
+    {
+      "Sid": "LLMShieldS3ObjectRead",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectMetadata",
+        "s3:GetObjectAttributes"
+      ],
+      "Resource": [
+        "arn:aws:s3:::llm-shield-*/models/*",
+        "arn:aws:s3:::llm-shield-*/scan-results/*",
+        "arn:aws:s3:::llm-shield-*/configs/*"
+      ]
+    },
+    {
+      "Sid": "LLMShieldS3ObjectWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::llm-shield-*/models/*",
+        "arn:aws:s3:::llm-shield-*/scan-results/*",
+        "arn:aws:s3:::llm-shield-*/configs/*"
+      ]
+    },
+    {
+      "Sid": "LLMShieldS3MultipartUpload",
+      "Effect": "Allow",
+      "Action": [
+        "s3:CreateMultipartUpload",
+        "s3:UploadPart",
+        "s3:CompleteMultipartUpload",
+        "s3:AbortMultipartUpload",
+        "s3:ListMultipartUploadParts"
+      ],
+      "Resource": [
+        "arn:aws:s3:::llm-shield-*/models/*",
+        "arn:aws:s3:::llm-shield-*/scan-results/*"
+      ]
+    },
+    {
+      "Sid": "LLMShieldS3Encryption",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:GenerateDataKey"
+      ],
+      "Resource": [
+        "arn:aws:kms:*:*:key/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": [
+            "s3.us-east-1.amazonaws.com",
+            "s3.us-west-2.amazonaws.com",
+            "s3.eu-west-1.amazonaws.com"
+          ]
+        }
+      }
+    }
+  ]
+}

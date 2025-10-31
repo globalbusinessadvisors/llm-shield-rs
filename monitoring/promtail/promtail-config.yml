@@ -1,0 +1,112 @@
+# Promtail Configuration for LLM Shield
+# Collects and ships logs to Loki
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: info
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    backoff_config:
+      min_period: 100ms
+      max_period: 10s
+      max_retries: 10
+    timeout: 10s
+
+scrape_configs:
+  # ==============================================================================
+  # LLM Shield Application Logs (file-based)
+  # ==============================================================================
+  - job_name: llm-shield-app
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: llm-shield-api
+          environment: development
+          __path__: /var/log/llm-shield/*.log
+
+    pipeline_stages:
+      # Parse JSON logs
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            target: target
+            span_id: span.id
+            trace_id: span.trace_id
+
+      # Extract log level
+      - labels:
+          level:
+          target:
+
+      # Convert timestamp
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+
+      # Drop debug logs in production (optional)
+      # - match:
+      #     selector: '{level="DEBUG"}'
+      #     action: drop
+
+  # ==============================================================================
+  # Docker Container Logs
+  # ==============================================================================
+  - job_name: docker
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: docker
+          __path__: /var/lib/docker/containers/*/*.log
+
+    pipeline_stages:
+      # Parse Docker JSON logs
+      - json:
+          expressions:
+            stream: stream
+            log: log
+            time: time
+
+      # Extract labels
+      - labels:
+          stream:
+
+      # Parse timestamp
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+
+      # Extract container metadata from path
+      - regex:
+          expression: '/var/lib/docker/containers/(?P<container_id>[^/]+)/.*'
+      - labels:
+          container_id:
+
+  # ==============================================================================
+  # System Logs (optional)
+  # ==============================================================================
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: syslog
+          __path__: /var/log/syslog
+
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\w+\s+\d+\s+\d+:\d+:\d+)\s+(?P<hostname>\S+)\s+(?P<program>\S+):\s+(?P<message>.*)$'
+      - labels:
+          hostname:
+          program:
+      - timestamp:
+          source: timestamp
+          format: "Jan 02 15:04:05"

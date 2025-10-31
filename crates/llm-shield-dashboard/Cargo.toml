@@ -1,0 +1,62 @@
+[package]
+name = "llm-shield-dashboard"
+version.workspace = true
+edition.workspace = true
+authors = ["LLM Shield Contributors"]
+description = "Enterprise-grade monitoring dashboard and analytics for LLM Shield"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["dashboard", "monitoring", "analytics", "graphql", "observability"]
+categories = ["web-programming", "visualization"]
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["macros", "ws"] }
+tower = { version = "0.4", features = ["full"] }
+tower-http = { version = "0.5", features = ["trace", "cors", "compression-gzip"] }
+
+# Async runtime
+tokio = { workspace = true, features = ["signal"] }
+
+# GraphQL
+async-graphql = { version = "7.0", features = ["chrono", "uuid"] }
+async-graphql-axum = "7.0"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Authentication & Security
+argon2 = { version = "0.5", features = ["std"] }
+jsonwebtoken = "9.2"
+rand = "0.8"
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Utilities
+uuid = { version = "1.11", features = ["v4", "serde"] }
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Validation
+validator = { version = "0.18", features = ["derive"] }
+
+# Configuration
+config = { version = "0.14", features = ["toml"] }
+
+[dev-dependencies]
+tokio-test = "0.4"
+mockall = "0.12"
+tower = { version = "0.4", features = ["util"] }
+http-body-util = "0.1"
+
+[features]
+default = []

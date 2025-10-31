@@ -1,0 +1,246 @@
+# LLM Shield Configuration
+# This file contains application-level configuration (non-sensitive)
+# For secrets (API keys, credentials), see ../secrets/
+
+# ==============================================================================
+# Server Configuration
+# ==============================================================================
+server:
+  host: "0.0.0.0"
+  port: 8080
+  metrics_port: 9090
+
+  # Request timeout (seconds)
+  timeout: 30
+
+  # Maximum request body size (bytes)
+  max_body_size: 1048576  # 1MB
+
+  # Keep-alive timeout (seconds)
+  keep_alive: 60
+
+# ==============================================================================
+# Authentication & Authorization
+# ==============================================================================
+auth:
+  enabled: true
+
+  # API key configuration
+  api_keys:
+    # File path (relative to container)
+    file: "/run/secrets/api_keys"
+
+    # Hash algorithm (argon2id recommended)
+    hash_algorithm: "argon2id"
+
+    # Cache hashed keys for performance
+    cache_enabled: true
+    cache_ttl_seconds: 3600
+
+# ==============================================================================
+# Rate Limiting
+# ==============================================================================
+rate_limit:
+  enabled: true
+
+  # Per-IP rate limiting
+  requests_per_window: 100
+  window_seconds: 60
+
+  # Burst allowance
+  burst: 20
+
+  # Custom limits per API key (optional)
+  # api_key_limits:
+  #   "dev-api-key-12345": 1000
+  #   "premium-client-xyz": 10000
+
+# ==============================================================================
+# CORS Configuration
+# ==============================================================================
+cors:
+  enabled: true
+
+  # Allowed origins (use ["*"] for development only)
+  allowed_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8080"
+    # - "https://your-domain.com"
+
+  # Allowed methods
+  allowed_methods:
+    - GET
+    - POST
+    - OPTIONS
+
+  # Allowed headers
+  allowed_headers:
+    - Authorization
+    - Content-Type
+    - X-Request-ID
+
+  # Expose headers
+  expose_headers:
+    - X-Request-ID
+    - X-Rate-Limit-Remaining
+
+  # Max age (seconds)
+  max_age: 3600
+
+  # Allow credentials
+  credentials: true
+
+# ==============================================================================
+# Logging Configuration
+# ==============================================================================
+logging:
+  # Log level: trace, debug, info, warn, error
+  level: "info"
+
+  # Format: json, pretty
+  format: "json"
+
+  # Output: stdout, file
+  output: "stdout"
+
+  # File output (if enabled)
+  file:
+    path: "/var/log/llm-shield/app.log"
+    max_size_mb: 100
+    max_backups: 10
+    max_age_days: 30
+
+  # Structured fields to include
+  include_fields:
+    - timestamp
+    - level
+    - target
+    - message
+    - span_id
+    - trace_id
+
+# ==============================================================================
+# Metrics & Observability
+# ==============================================================================
+metrics:
+  enabled: true
+
+  # Prometheus endpoint
+  endpoint: "/metrics"
+
+  # Histogram buckets for latency (seconds)
+  latency_buckets:
+    - 0.001  # 1ms
+    - 0.005  # 5ms
+    - 0.010  # 10ms
+    - 0.025  # 25ms
+    - 0.050  # 50ms
+    - 0.100  # 100ms
+    - 0.250  # 250ms
+    - 0.500  # 500ms
+    - 1.000  # 1s
+    - 2.500  # 2.5s
+    - 5.000  # 5s
+
+# ==============================================================================
+# Tracing (OpenTelemetry)
+# ==============================================================================
+tracing:
+  enabled: false
+
+  # OTLP endpoint (e.g., Jaeger, Tempo)
+  # otlp_endpoint: "http://jaeger:4317"
+
+  # Service name
+  service_name: "llm-shield-api"
+
+  # Sampling rate (0.0 - 1.0)
+  sampling_rate: 0.1
+
+# ==============================================================================
+# Scanner Configuration
+# ==============================================================================
+scanners:
+  # Global timeout for all scanners (milliseconds)
+  timeout_ms: 5000
+
+  # Enable/disable specific scanners
+  enabled:
+    ban_substrings: true
+    secrets: true
+    prompt_injection: true
+    toxicity: true
+    gibberish: true
+    invisible_text: true
+    language: true
+    token_limit: true
+    ban_competitors: true
+    sentiment: true
+    ban_code: true
+    regex: true
+
+  # Scanner-specific configuration
+  ban_substrings:
+    default_case_sensitive: false
+    default_redact: true
+
+  secrets:
+    default_redact: true
+    confidence_threshold: 0.8
+
+  toxicity:
+    threshold: 0.7
+    model: "distilbert-toxicity"
+
+  token_limit:
+    default_limit: 4096
+    default_encoding: "cl100k_base"
+
+# ==============================================================================
+# ML Models Configuration
+# ==============================================================================
+models:
+  # Model storage path
+  path: "/opt/llm-shield/models"
+
+  # Download models at startup if missing
+  auto_download: true
+
+  # Model repository URL
+  repository: "https://huggingface.co/llm-shield"
+
+  # Cache configuration
+  cache_enabled: true
+  cache_size_mb: 1024
+
+# ==============================================================================
+# Performance Tuning
+# ==============================================================================
+performance:
+  # Worker threads (0 = auto-detect)
+  worker_threads: 0
+
+  # Blocking threads for I/O
+  blocking_threads: 512
+
+  # Connection pool size
+  connection_pool_size: 100
+
+  # Request queue size
+  queue_size: 1000
+
+# ==============================================================================
+# Health Check Configuration
+# ==============================================================================
+health:
+  endpoint: "/health"
+
+  # Include detailed status
+  detailed: true
+
+  # Checks to perform
+  checks:
+    - database
+    - models
+    - memory
+    - disk

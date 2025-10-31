@@ -1,0 +1,53 @@
+title: LLM Shield Full Access Role
+description: Combined IAM role for all LLM Shield GCP services (dev/test)
+stage: GA
+includedPermissions:
+  # Secret Manager
+  - secretmanager.secrets.list
+  - secretmanager.secrets.get
+  - secretmanager.secrets.create
+  - secretmanager.secrets.delete
+  - secretmanager.versions.access
+  - secretmanager.versions.add
+  - secretmanager.versions.get
+  - secretmanager.versions.list
+  - secretmanager.versions.destroy
+  - secretmanager.secrets.getIamPolicy
+  - secretmanager.secrets.setIamPolicy
+
+  # Cloud Storage
+  - storage.buckets.get
+  - storage.buckets.list
+  - storage.objects.list
+  - storage.objects.get
+  - storage.objects.create
+  - storage.objects.update
+  - storage.objects.delete
+  - storage.objects.getIamPolicy
+  - storage.objects.setIamPolicy
+  - storage.multipartUploads.create
+  - storage.multipartUploads.abort
+  - storage.multipartUploads.listParts
+
+  # Cloud Monitoring
+  - monitoring.timeSeries.create
+  - monitoring.timeSeries.list
+  - monitoring.metricDescriptors.create
+  - monitoring.metricDescriptors.get
+  - monitoring.metricDescriptors.list
+  - monitoring.monitoredResourceDescriptors.get
+  - monitoring.monitoredResourceDescriptors.list
+
+  # Cloud Logging
+  - logging.logEntries.create
+  - logging.logEntries.list
+  - logging.logs.list
+  - logging.logs.delete
+  - logging.sinks.create
+  - logging.sinks.get
+  - logging.sinks.list
+  - logging.sinks.update
+  - logging.sinks.delete
+
+  # Resource Manager
+  - resourcemanager.projects.get

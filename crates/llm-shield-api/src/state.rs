@@ -6,6 +6,9 @@ use llm_shield_models::cache::{CacheConfig, ResultCache};
 use std::collections::HashMap;
 use std::sync::Arc;
 
+#[cfg(feature = "cloud")]
+use llm_shield_cloud::{CloudLogger, CloudMetrics, CloudSecretManager, CloudStorage};
+
 /// Shared application state
 ///
 /// ## Thread Safety
@@ -23,6 +26,22 @@ pub struct AppState {
 
     /// Result cache
     pub cache: Arc<ResultCache>,
+
+    /// Cloud secret manager (optional)
+    #[cfg(feature = "cloud")]
+    pub secret_manager: Option<Arc<dyn CloudSecretManager>>,
+
+    /// Cloud storage (optional)
+    #[cfg(feature = "cloud")]
+    pub cloud_storage: Option<Arc<dyn CloudStorage>>,
+
+    /// Cloud metrics (optional)
+    #[cfg(feature = "cloud")]
+    pub cloud_metrics: Option<Arc<dyn CloudMetrics>>,
+
+    /// Cloud logger (optional)
+    #[cfg(feature = "cloud")]
+    pub cloud_logger: Option<Arc<dyn CloudLogger>>,
 }
 
 impl AppState {
@@ -39,6 +58,14 @@ impl AppState {
             config: Arc::new(config),
             scanners: Arc::new(HashMap::new()),
             cache: Arc::new(cache),
+            #[cfg(feature = "cloud")]
+            secret_manager: None,
+            #[cfg(feature = "cloud")]
+            cloud_storage: None,
+            #[cfg(feature = "cloud")]
+            cloud_metrics: None,
+            #[cfg(feature = "cloud")]
+            cloud_logger: None,
         }
     }
 
@@ -63,12 +90,48 @@ impl AppState {
     pub fn scanner_count(&self) -> usize {
         self.scanners.len()
     }
+
+    /// Set cloud secret manager
+    #[cfg(feature = "cloud")]
+    pub fn with_secret_manager(mut self, manager: Arc<dyn CloudSecretManager>) -> Self {
+        self.secret_manager = Some(manager);
+        self
+    }
+
+    /// Set cloud storage
+    #[cfg(feature = "cloud")]
+    pub fn with_cloud_storage(mut self, storage: Arc<dyn CloudStorage>) -> Self {
+        self.cloud_storage = Some(storage);
+        self
+    }
+
+    /// Set cloud metrics
+    #[cfg(feature = "cloud")]
+    pub fn with_cloud_metrics(mut self, metrics: Arc<dyn CloudMetrics>) -> Self {
+        self.cloud_metrics = Some(metrics);
+        self
+    }
+
+    /// Set cloud logger
+    #[cfg(feature = "cloud")]
+    pub fn with_cloud_logger(mut self, logger: Arc<dyn CloudLogger>) -> Self {
+        self.cloud_logger = Some(logger);
+        self
+    }
 }
 
 /// Builder for AppState with fluent API
 pub struct AppStateBuilder {
     config: AppConfig,
     scanners: HashMap<String, Arc<dyn Scanner>>,
+    #[cfg(feature = "cloud")]
+    secret_manager: Option<Arc<dyn CloudSecretManager>>,
+    #[cfg(feature = "cloud")]
+    cloud_storage: Option<Arc<dyn CloudStorage>>,
+    #[cfg(feature = "cloud")]
+    cloud_metrics: Option<Arc<dyn CloudMetrics>>,
+    #[cfg(feature = "cloud")]
+    cloud_logger: Option<Arc<dyn CloudLogger>>,
 }
 
 impl AppStateBuilder {
@@ -77,6 +140,14 @@ impl AppStateBuilder {
         Self {
             config,
             scanners: HashMap::new(),
+            #[cfg(feature = "cloud")]
+            secret_manager: None,
+            #[cfg(feature = "cloud")]
+            cloud_storage: None,
+            #[cfg(feature = "cloud")]
+            cloud_metrics: None,
+            #[cfg(feature = "cloud")]
+            cloud_logger: None,
         }
     }
 
@@ -94,6 +165,34 @@ impl AppStateBuilder {
         self
     }
 
+    /// Set cloud secret manager
+    #[cfg(feature = "cloud")]
+    pub fn with_secret_manager(mut self, manager: Arc<dyn CloudSecretManager>) -> Self {
+        self.secret_manager = Some(manager);
+        self
+    }
+
+    /// Set cloud storage
+    #[cfg(feature = "cloud")]
+    pub fn with_cloud_storage(mut self, storage: Arc<dyn CloudStorage>) -> Self {
+        self.cloud_storage = Some(storage);
+        self
+    }
+
+    /// Set cloud metrics
+    #[cfg(feature = "cloud")]
+    pub fn with_cloud_metrics(mut self, metrics: Arc<dyn CloudMetrics>) -> Self {
+        self.cloud_metrics = Some(metrics);
+        self
+    }
+
+    /// Set cloud logger
+    #[cfg(feature = "cloud")]
+    pub fn with_cloud_logger(mut self, logger: Arc<dyn CloudLogger>) -> Self {
+        self.cloud_logger = Some(logger);
+        self
+    }
+
     /// Build the AppState
     pub fn build(self) -> AppState {
         let cache_config = CacheConfig {
@@ -106,6 +205,14 @@ impl AppStateBuilder {
             config: Arc::new(self.config),
             scanners: Arc::new(self.scanners),
             cache: Arc::new(cache),
+            #[cfg(feature = "cloud")]
+            secret_manager: self.secret_manager,
+            #[cfg(feature = "cloud")]
+            cloud_storage: self.cloud_storage,
+            #[cfg(feature = "cloud")]
+            cloud_metrics: self.cloud_metrics,
+            #[cfg(feature = "cloud")]
+            cloud_logger: self.cloud_logger,
         }
     }
 }

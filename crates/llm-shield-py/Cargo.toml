@@ -1,0 +1,53 @@
+[package]
+name = "llm-shield-py"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Python bindings for LLM Shield - Enterprise-grade LLM security toolkit"
+
+[lib]
+name = "llm_shield"
+crate-type = ["cdylib"]
+
+[dependencies]
+# PyO3 core
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py38"] }
+pyo3-asyncio-0-21 = { version = "0.21", features = ["tokio-runtime", "attributes"] }
+
+# Workspace crates
+llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-scanners = { path = "../llm-shield-scanners" }
+llm-shield-models = { path = "../llm-shield-models" }
+llm-shield-anonymize = { path = "../llm-shield-anonymize" }
+llm-shield-nlp = { path = "../llm-shield-nlp" }
+llm-shield-secrets = { path = "../llm-shield-secrets" }
+
+# Async runtime
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Utilities
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio-test = "0.4"
+proptest = "1.4"
+
+[build-dependencies]
+pyo3-build-config = "0.22"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

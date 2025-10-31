@@ -2,11 +2,13 @@
 
 pub mod app;
 pub mod auth;
+pub mod cloud;
 pub mod observability;
 pub mod rate_limit;
 
 pub use app::AppConfig;
 pub use auth::AuthConfig;
+pub use cloud::CloudConfig;
 pub use observability::ObservabilityConfig;
 pub use rate_limit::{RateLimitConfig, RateLimitTier};
 

@@ -1,0 +1,184 @@
+# Prometheus Alert Rules for LLM Shield
+# Defines alerts for critical system conditions
+
+groups:
+  # ==============================================================================
+  # API Health and Availability
+  # ==============================================================================
+  - name: llm-shield-api-health
+    interval: 30s
+    rules:
+      - alert: APIDown
+        expr: up{job="llm-shield-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "LLM Shield API is down"
+          description: "LLM Shield API has been down for more than 1 minute."
+
+      - alert: APIHighErrorRate
+        expr: |
+          rate(http_requests_total{job="llm-shield-api",status=~"5.."}[5m])
+          /
+          rate(http_requests_total{job="llm-shield-api"}[5m])
+          > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High error rate on LLM Shield API"
+          description: "API error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+
+      - alert: APIHighLatency
+        expr: |
+          histogram_quantile(0.95,
+            rate(http_request_duration_seconds_bucket{job="llm-shield-api"}[5m])
+          ) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High latency on LLM Shield API"
+          description: "95th percentile latency is {{ $value }}s (threshold: 1s)"
+
+  # ==============================================================================
+  # Resource Utilization
+  # ==============================================================================
+  - name: llm-shield-resources
+    interval: 30s
+    rules:
+      - alert: HighMemoryUsage
+        expr: |
+          (process_resident_memory_bytes{job="llm-shield-api"}
+          / 1024 / 1024) > 800
+        for: 5m
+        labels:
+          severity: warning
+          component: resources
+        annotations:
+          summary: "High memory usage on LLM Shield API"
+          description: "Memory usage is {{ $value }}MB (threshold: 800MB)"
+
+      - alert: HighCPUUsage
+        expr: |
+          rate(process_cpu_seconds_total{job="llm-shield-api"}[5m]) > 1.5
+        for: 5m
+        labels:
+          severity: warning
+          component: resources
+        annotations:
+          summary: "High CPU usage on LLM Shield API"
+          description: "CPU usage is {{ $value }} cores (threshold: 1.5 cores)"
+
+  # ==============================================================================
+  # Throughput and Rate Limiting
+  # ==============================================================================
+  - name: llm-shield-throughput
+    interval: 30s
+    rules:
+      - alert: LowThroughput
+        expr: |
+          rate(http_requests_total{job="llm-shield-api"}[5m]) < 1
+        for: 10m
+        labels:
+          severity: info
+          component: api
+        annotations:
+          summary: "Low request throughput on LLM Shield API"
+          description: "Request rate is {{ $value }} req/s (threshold: 1 req/s)"
+
+      - alert: HighRateLimitRejects
+        expr: |
+          rate(rate_limit_rejected_total{job="llm-shield-api"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: rate-limiter
+        annotations:
+          summary: "High rate of rate-limited requests"
+          description: "Rate limiter is rejecting {{ $value }} req/s"
+
+  # ==============================================================================
+  # Scanner-Specific Alerts
+  # ==============================================================================
+  - name: llm-shield-scanners
+    interval: 30s
+    rules:
+      - alert: ScannerHighFailureRate
+        expr: |
+          rate(scanner_errors_total{job="llm-shield-api"}[5m])
+          /
+          rate(scanner_scans_total{job="llm-shield-api"}[5m])
+          > 0.10
+        for: 5m
+        labels:
+          severity: warning
+          component: scanners
+        annotations:
+          summary: "High scanner failure rate"
+          description: "Scanner '{{ $labels.scanner }}' failure rate is {{ $value | humanizePercentage }}"
+
+      - alert: ScannerSlowPerformance
+        expr: |
+          histogram_quantile(0.95,
+            rate(scanner_duration_seconds_bucket{job="llm-shield-api"}[5m])
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          component: scanners
+        annotations:
+          summary: "Slow scanner performance"
+          description: "Scanner '{{ $labels.scanner }}' 95th percentile duration is {{ $value }}s"
+
+  # ==============================================================================
+  # Security Alerts
+  # ==============================================================================
+  - name: llm-shield-security
+    interval: 30s
+    rules:
+      - alert: HighAuthenticationFailures
+        expr: |
+          rate(auth_failures_total{job="llm-shield-api"}[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "High rate of authentication failures"
+          description: "{{ $value }} authentication failures per second"
+
+      - alert: SuspiciousTrafficPattern
+        expr: |
+          rate(http_requests_total{job="llm-shield-api",status="401"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "Suspicious traffic pattern detected"
+          description: "High rate of 401 responses: {{ $value }} req/s"
+
+  # ==============================================================================
+  # Data Quality Alerts
+  # ==============================================================================
+  - name: llm-shield-data-quality
+    interval: 30s
+    rules:
+      - alert: HighInvalidInputRate
+        expr: |
+          rate(validation_errors_total{job="llm-shield-api"}[5m])
+          /
+          rate(http_requests_total{job="llm-shield-api"}[5m])
+          > 0.20
+        for: 5m
+        labels:
+          severity: info
+          component: validation
+        annotations:
+          summary: "High rate of invalid inputs"
+          description: "{{ $value | humanizePercentage }} of requests have validation errors"

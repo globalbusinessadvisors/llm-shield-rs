@@ -1,0 +1,24 @@
+{
+  "Name": "LLM Shield Azure Monitor Access",
+  "Description": "Custom role for LLM Shield to access Azure Monitor (metrics and logs)",
+  "IsCustom": true,
+  "Actions": [
+    "Microsoft.Insights/Metrics/Write",
+    "Microsoft.Insights/Metrics/Read",
+    "Microsoft.Insights/DiagnosticSettings/Read",
+    "Microsoft.Insights/DiagnosticSettings/Write",
+    "Microsoft.OperationalInsights/workspaces/read",
+    "Microsoft.OperationalInsights/workspaces/sharedKeys/action",
+    "Microsoft.OperationalInsights/workspaces/analytics/query/action",
+    "Microsoft.OperationalInsights/workspaces/api/query/action"
+  ],
+  "NotActions": [],
+  "DataActions": [
+    "Microsoft.Insights/Telemetry/Write",
+    "Microsoft.Insights/Metrics/Write"
+  ],
+  "NotDataActions": [],
+  "AssignableScopes": [
+    "/subscriptions/{subscription-id}"
+  ]
+}

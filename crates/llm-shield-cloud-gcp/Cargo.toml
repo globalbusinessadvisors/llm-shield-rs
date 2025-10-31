@@ -1,0 +1,58 @@
+[package]
+name = "llm-shield-cloud-gcp"
+version.workspace = true
+edition.workspace = true
+authors = ["LLM Shield Contributors"]
+description = "GCP cloud integrations for LLM Shield - Secret Manager, Cloud Storage, Cloud Monitoring"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["gcp", "cloud", "secrets", "storage", "monitoring"]
+categories = ["web-programming", "api-bindings"]
+
+[dependencies]
+# Core abstractions
+llm-shield-cloud = { path = "../llm-shield-cloud" }
+
+# GCP SDK (official)
+google-cloud-auth = "0.16"
+google-cloud-googleapis = "0.14"
+google-cloud-storage = "0.21"
+google-cloud-pubsub = "0.25"
+
+# Secrets and monitoring via gRPC
+tonic = "0.12"
+prost = "0.13"
+prost-types = "0.13"
+
+# Async runtime
+tokio = { workspace = true }
+async-trait = "0.1"
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = "1.0"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = { workspace = true }
+
+# Utilities
+bytes = "1.7"
+base64 = "0.22"
+
+[dev-dependencies]
+tokio-test = "0.4"
+futures = { workspace = true }
+uuid = { version = "1.11", features = ["v4"] }
+
+[features]
+default = []
+
+# Optional features
+trace = []  # Enable Cloud Trace (future)

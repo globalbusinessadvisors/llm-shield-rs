@@ -1,0 +1,59 @@
+[package]
+name = "llm-shield-cloud-azure"
+version.workspace = true
+edition.workspace = true
+authors = ["LLM Shield Contributors"]
+description = "Azure cloud integrations for LLM Shield - Key Vault, Blob Storage, Azure Monitor"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["azure", "cloud", "secrets", "storage", "monitor"]
+categories = ["web-programming", "api-bindings"]
+
+[dependencies]
+# Core abstractions
+llm-shield-cloud = { path = "../llm-shield-cloud" }
+
+# Azure SDK (official, beta)
+azure_core = "0.20"
+azure_identity = "0.20"
+azure_security_keyvault = "0.20"
+azure_storage = "0.20"
+azure_storage_blobs = "0.20"
+
+# HTTP client
+reqwest = { version = "0.12", features = ["json"] }
+
+# Async runtime
+tokio = { workspace = true }
+async-trait = "0.1"
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = "1.0"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+time = "0.3"
+
+# Logging
+tracing = { workspace = true }
+
+# Utilities
+bytes = "1.7"
+base64 = "0.22"
+url = "2.5"
+
+[dev-dependencies]
+tokio-test = "0.4"
+futures = { workspace = true }
+uuid = { version = "1.11", features = ["v4"] }
+
+[features]
+default = []
+
+# Optional features
+app-insights = []  # Enable Application Insights (future)

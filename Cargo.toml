@@ -9,6 +9,11 @@ members = [
     "crates/llm-shield-anonymize",
     "crates/llm-shield-api",
     "crates/llm-shield-wasm",
+    "crates/llm-shield-py",
+    "crates/llm-shield-cloud",
+    "crates/llm-shield-cloud-aws",
+    "crates/llm-shield-cloud-gcp",
+    "crates/llm-shield-cloud-azure",
 ]
 
 [workspace.package]

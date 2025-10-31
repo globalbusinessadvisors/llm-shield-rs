@@ -1,0 +1,75 @@
+# LLM Shield API Configuration - Azure Deployment
+# Deploy with: cargo run --features cloud-azure --example cloud-deploy -- --config examples/cloud/config-azure.toml
+
+[server]
+host = "0.0.0.0"
+port = 8080
+timeout_secs = 30
+max_body_size = 10485760  # 10 MB
+workers = 4
+
+[auth]
+enabled = true
+jwt_secret = "${AZURE_SECRET:jwt-secret}"  # Fetch from Azure Key Vault
+jwt_expiration_secs = 3600
+api_key_enabled = true
+
+[rate_limit]
+enabled = true
+requests_per_second = 100
+burst_size = 200
+
+[rate_limit.tiers.free]
+requests_per_minute = 60
+requests_per_hour = 1000
+concurrent_requests = 5
+
+[rate_limit.tiers.pro]
+requests_per_minute = 600
+requests_per_hour = 10000
+concurrent_requests = 50
+
+[rate_limit.tiers.enterprise]
+requests_per_minute = 6000
+requests_per_hour = 100000
+concurrent_requests = 500
+
+[observability]
+tracing_enabled = true
+tracing_level = "info"
+metrics_enabled = true
+prometheus_port = 9090
+
+[cache]
+enabled = true
+max_size = 10000
+ttl_secs = 300
+
+[models]
+registry_path = "models/registry.json"
+preload = true
+preload_list = []
+
+# Azure Cloud Configuration
+[cloud]
+enabled = true
+provider = "azure"
+
+[cloud.azure.secrets]
+enabled = true
+vault_url = "https://llm-shield-kv.vault.azure.net"
+cache_ttl_seconds = 300
+
+[cloud.azure.storage]
+enabled = true
+account_name = "llmshieldstorage"
+container_name = "models"
+
+[cloud.azure.observability]
+metrics_enabled = true
+logs_enabled = true
+resource_id = "/subscriptions/{subscription-id}/resourceGroups/llm-shield-rg/providers/Microsoft.Compute/virtualMachines/llm-shield-vm"
+region = "eastus"
+workspace_id = "workspace-id"
+shared_key = "${AZURE_SECRET:log-analytics-key}"
+log_type = "LLMShieldAPI"

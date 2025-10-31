@@ -1,0 +1,74 @@
+# Prometheus Configuration for LLM Shield
+# Scrapes metrics from LLM Shield API and monitors system health
+
+global:
+  scrape_interval: 15s       # Default scrape interval
+  evaluation_interval: 15s   # Evaluate rules every 15s
+  scrape_timeout: 10s
+  external_labels:
+    cluster: 'llm-shield-local'
+    environment: 'development'
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# Load alert rules
+rule_files:
+  - 'alerts.yml'
+
+# Scrape configurations
+scrape_configs:
+  # ==============================================================================
+  # LLM Shield API Metrics
+  # ==============================================================================
+  - job_name: 'llm-shield-api'
+    static_configs:
+      - targets: ['llm-shield:9090']
+        labels:
+          service: 'llm-shield-api'
+          instance: 'llm-shield-api-1'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # ==============================================================================
+  # Prometheus Self-Monitoring
+  # ==============================================================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # ==============================================================================
+  # Docker Container Metrics (cAdvisor - optional)
+  # ==============================================================================
+  # - job_name: 'cadvisor'
+  #   static_configs:
+  #     - targets: ['cadvisor:8080']
+  #       labels:
+  #         service: 'cadvisor'
+
+  # ==============================================================================
+  # Node Exporter for System Metrics (optional)
+  # ==============================================================================
+  # - job_name: 'node-exporter'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #       labels:
+  #         service: 'node-exporter'
+
+# Remote write configuration for long-term storage (optional)
+# remote_write:
+#   - url: "https://prometheus.example.com/api/v1/write"
+#     basic_auth:
+#       username: 'user'
+#       password: 'pass'
+
+# Remote read configuration (optional)
+# remote_read:
+#   - url: "https://prometheus.example.com/api/v1/read"

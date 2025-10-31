@@ -1,0 +1,125 @@
+# Docker ignore file for LLM Shield
+# Optimizes build context by excluding unnecessary files
+
+# Git
+.git/
+.gitignore
+.github/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+target/
+**/target/
+dist/
+build/
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Node.js (for WASM builds)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Rust
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Examples and tests
+examples/
+benchmarks/
+**/tests/
+**/benches/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Deployment configs (keep only Dockerfile)
+docker-compose*.yml
+kubernetes/
+k8s/
+terraform/
+helm/
+*.yaml
+*.yml
+!Cargo.toml
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# OS-specific
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Coverage and profiling
+coverage/
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+
+# Security
+.env
+.env.*
+secrets/
+*.key
+*.pem
+*.crt
+
+# Large model files (download at runtime or use separate volumes)
+models/*.onnx
+models/*.bin
+*.model
+
+# Plans and documentation
+plans/
+SPECIFICATION.md
+PSEUDOCODE.md
+IMPLEMENTATION_*.md
+
+# Package files
+packages/
+*.tar.gz
+*.zip
+
+# Claude Flow
+.claude-flow/

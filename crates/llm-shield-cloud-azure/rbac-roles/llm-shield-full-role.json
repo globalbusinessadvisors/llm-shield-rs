@@ -1,0 +1,49 @@
+{
+  "Name": "LLM Shield Full Access",
+  "Description": "Combined custom role for LLM Shield with all Azure service permissions (dev/test)",
+  "IsCustom": true,
+  "Actions": [
+    "Microsoft.KeyVault/vaults/read",
+    "Microsoft.KeyVault/vaults/secrets/read",
+    "Microsoft.KeyVault/vaults/secrets/getSecret/action",
+    "Microsoft.KeyVault/vaults/secrets/readMetadata/action",
+    "Microsoft.KeyVault/vaults/secrets/write",
+    "Microsoft.KeyVault/vaults/secrets/delete",
+    "Microsoft.KeyVault/vaults/secrets/recover/action",
+    "Microsoft.KeyVault/vaults/secrets/backup/action",
+    "Microsoft.KeyVault/vaults/secrets/restore/action",
+    "Microsoft.Storage/storageAccounts/read",
+    "Microsoft.Storage/storageAccounts/listKeys/action",
+    "Microsoft.Storage/storageAccounts/blobServices/read",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/read",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/write",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/delete",
+    "Microsoft.Insights/Metrics/Write",
+    "Microsoft.Insights/Metrics/Read",
+    "Microsoft.Insights/DiagnosticSettings/Read",
+    "Microsoft.Insights/DiagnosticSettings/Write",
+    "Microsoft.OperationalInsights/workspaces/read",
+    "Microsoft.OperationalInsights/workspaces/sharedKeys/action",
+    "Microsoft.OperationalInsights/workspaces/analytics/query/action",
+    "Microsoft.OperationalInsights/workspaces/api/query/action"
+  ],
+  "NotActions": [],
+  "DataActions": [
+    "Microsoft.KeyVault/vaults/secrets/read",
+    "Microsoft.KeyVault/vaults/secrets/write",
+    "Microsoft.KeyVault/vaults/secrets/delete",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/add/action",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/move/action",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/read",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write",
+    "Microsoft.Insights/Telemetry/Write",
+    "Microsoft.Insights/Metrics/Write"
+  ],
+  "NotDataActions": [],
+  "AssignableScopes": [
+    "/subscriptions/{subscription-id}"
+  ]
+}

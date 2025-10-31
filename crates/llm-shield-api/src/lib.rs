@@ -4,6 +4,8 @@
 //! capabilities via HTTP with enterprise-grade security, observability, and performance.
 
 pub mod auth;
+#[cfg(feature = "cloud")]
+pub mod cloud_init;
 pub mod config;
 pub mod extractors;
 pub mod handlers;

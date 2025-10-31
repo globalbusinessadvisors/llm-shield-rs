@@ -1,0 +1,241 @@
+version: '3.9'
+
+# LLM Shield Docker Compose Stack
+# Includes: API, Prometheus, Grafana, Loki
+#
+# Usage:
+#   docker-compose up -d              # Start all services
+#   docker-compose logs -f llm-shield # View API logs
+#   docker-compose down               # Stop all services
+#
+# Access:
+#   LLM Shield API:  http://localhost:8080
+#   Swagger UI:      http://localhost:8080/swagger-ui
+#   Metrics:         http://localhost:9090/metrics
+#   Prometheus:      http://localhost:9091
+#   Grafana:         http://localhost:3000 (admin/admin)
+#   Loki:            http://localhost:3100
+
+services:
+  # ==============================================================================
+  # LLM Shield API
+  # ==============================================================================
+  llm-shield:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llm-shield-api
+    ports:
+      - "8080:8080"  # API
+      - "9090:9090"  # Metrics
+    environment:
+      # Application settings
+      - RUST_LOG=info,llm_shield=debug
+      - LLM_SHIELD_HOST=0.0.0.0
+      - LLM_SHIELD_PORT=8080
+      - LLM_SHIELD_METRICS_PORT=9090
+
+      # Authentication
+      - LLM_SHIELD_AUTH_ENABLED=true
+      - LLM_SHIELD_API_KEYS_FILE=/run/secrets/api_keys
+
+      # Rate limiting
+      - LLM_SHIELD_RATE_LIMIT_REQUESTS=100
+      - LLM_SHIELD_RATE_LIMIT_WINDOW_SECS=60
+
+      # CORS
+      - LLM_SHIELD_CORS_ENABLED=true
+      - LLM_SHIELD_CORS_ALLOW_ORIGINS=http://localhost:3000,http://localhost:8080
+
+      # Performance
+      - LLM_SHIELD_MAX_BODY_SIZE=1048576  # 1MB
+      - LLM_SHIELD_TIMEOUT_SECS=30
+    secrets:
+      - api_keys
+    volumes:
+      # Configuration files (read-only)
+      - ./config:/etc/llm-shield:ro
+
+      # ML models (read-only, mount if models are large)
+      # - ./models:/opt/llm-shield/models:ro
+
+      # Logs (writable)
+      - logs:/var/log/llm-shield
+    networks:
+      - llm-shield-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  # ==============================================================================
+  # Prometheus - Metrics Collection
+  # ==============================================================================
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: llm-shield-prometheus
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - llm-shield-net
+    depends_on:
+      - llm-shield
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ==============================================================================
+  # Grafana - Visualization and Dashboards
+  # ==============================================================================
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: llm-shield-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      # Admin credentials
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+      # Security
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_USERS_ALLOW_ORG_CREATE=false
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+
+      # Server
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - GF_SERVER_SERVE_FROM_SUB_PATH=false
+
+      # Logging
+      - GF_LOG_LEVEL=info
+    volumes:
+      # Provisioning
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+
+      # Dashboard JSON files
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+
+      # Persistent storage
+      - grafana-data:/var/lib/grafana
+    networks:
+      - llm-shield-net
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ==============================================================================
+  # Loki - Log Aggregation
+  # ==============================================================================
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: llm-shield-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+    networks:
+      - llm-shield-net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ==============================================================================
+  # Promtail - Log Shipper (optional, for file-based logs)
+  # ==============================================================================
+  promtail:
+    image: grafana/promtail:2.9.3
+    container_name: llm-shield-promtail
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - logs:/var/log/llm-shield:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - llm-shield-net
+    depends_on:
+      - loki
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+# ==============================================================================
+# Secrets
+# ==============================================================================
+secrets:
+  api_keys:
+    file: ./secrets/api_keys.txt
+
+# ==============================================================================
+# Volumes
+# ==============================================================================
+volumes:
+  logs:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  loki-data:
+    driver: local
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  llm-shield-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

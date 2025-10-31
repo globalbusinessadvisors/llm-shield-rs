@@ -1,6 +1,6 @@
 //! Main application configuration
 
-use super::{AuthConfig, ConfigError, ObservabilityConfig, RateLimitConfig, Result};
+use super::{AuthConfig, CloudConfig, ConfigError, ObservabilityConfig, RateLimitConfig, Result};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
@@ -24,6 +24,10 @@ pub struct AppConfig {
 
     /// Models configuration
     pub models: ModelsConfig,
+
+    /// Cloud integration configuration
+    #[serde(default)]
+    pub cloud: CloudConfig,
 }
 
 impl AppConfig {
@@ -35,6 +39,7 @@ impl AppConfig {
         self.observability.validate()?;
         self.cache.validate()?;
         self.models.validate()?;
+        self.cloud.validate()?;
         Ok(())
     }
 }
@@ -48,6 +53,7 @@ impl Default for AppConfig {
             observability: ObservabilityConfig::default(),
             cache: CacheConfig::default(),
             models: ModelsConfig::default(),
+            cloud: CloudConfig::default(),
         }
     }
 }

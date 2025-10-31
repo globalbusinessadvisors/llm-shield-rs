@@ -1,0 +1,73 @@
+# LLM Shield API Configuration - GCP Deployment
+# Deploy with: cargo run --features cloud-gcp --example cloud-deploy -- --config examples/cloud/config-gcp.toml
+
+[server]
+host = "0.0.0.0"
+port = 8080
+timeout_secs = 30
+max_body_size = 10485760  # 10 MB
+workers = 4
+
+[auth]
+enabled = true
+jwt_secret = "${GCP_SECRET:jwt-secret}"  # Fetch from GCP Secret Manager
+jwt_expiration_secs = 3600
+api_key_enabled = true
+
+[rate_limit]
+enabled = true
+requests_per_second = 100
+burst_size = 200
+
+[rate_limit.tiers.free]
+requests_per_minute = 60
+requests_per_hour = 1000
+concurrent_requests = 5
+
+[rate_limit.tiers.pro]
+requests_per_minute = 600
+requests_per_hour = 10000
+concurrent_requests = 50
+
+[rate_limit.tiers.enterprise]
+requests_per_minute = 6000
+requests_per_hour = 100000
+concurrent_requests = 500
+
+[observability]
+tracing_enabled = true
+tracing_level = "info"
+metrics_enabled = true
+prometheus_port = 9090
+
+[cache]
+enabled = true
+max_size = 10000
+ttl_secs = 300
+
+[models]
+registry_path = "models/registry.json"
+preload = true
+preload_list = []
+
+# GCP Cloud Configuration
+[cloud]
+enabled = true
+provider = "gcp"
+
+[cloud.gcp]
+project_id = "llm-shield-prod"  # Override with GCP_PROJECT env var
+
+[cloud.gcp.secrets]
+enabled = true
+cache_ttl_seconds = 300
+
+[cloud.gcp.storage]
+enabled = true
+bucket = "llm-shield-models"
+prefix = "production/"
+
+[cloud.gcp.observability]
+metrics_enabled = true
+logs_enabled = true
+log_name = "llm-shield-api"

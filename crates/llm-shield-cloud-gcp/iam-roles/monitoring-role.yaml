@@ -1,0 +1,28 @@
+title: LLM Shield Monitoring and Logging Role
+description: IAM role for Cloud Monitoring and Cloud Logging
+stage: GA
+includedPermissions:
+  # Cloud Monitoring - Metrics
+  - monitoring.timeSeries.create
+  - monitoring.timeSeries.list
+  - monitoring.metricDescriptors.create
+  - monitoring.metricDescriptors.get
+  - monitoring.metricDescriptors.list
+  - monitoring.monitoredResourceDescriptors.get
+  - monitoring.monitoredResourceDescriptors.list
+
+  # Cloud Logging - Write logs
+  - logging.logEntries.create
+  - logging.logEntries.list
+  - logging.logs.list
+  - logging.logs.delete
+
+  # Log sinks (optional)
+  - logging.sinks.create
+  - logging.sinks.get
+  - logging.sinks.list
+  - logging.sinks.update
+  - logging.sinks.delete
+
+  # Resource metadata
+  - resourcemanager.projects.get

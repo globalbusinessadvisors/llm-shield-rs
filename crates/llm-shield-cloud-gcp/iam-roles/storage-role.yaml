@@ -1,0 +1,23 @@
+title: LLM Shield Cloud Storage Role
+description: IAM role for accessing GCP Cloud Storage
+stage: GA
+includedPermissions:
+  # List objects
+  - storage.objects.list
+  # Get objects
+  - storage.objects.get
+  # Create/update objects
+  - storage.objects.create
+  - storage.objects.update
+  # Delete objects
+  - storage.objects.delete
+  # Get bucket metadata
+  - storage.buckets.get
+  - storage.buckets.list
+  # Object metadata
+  - storage.objects.getIamPolicy
+  - storage.objects.setIamPolicy
+  # Multipart/resumable uploads
+  - storage.multipartUploads.create
+  - storage.multipartUploads.abort
+  - storage.multipartUploads.listParts
