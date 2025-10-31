@@ -1,3 +1,5 @@
 //! HTTP request handlers
 
-// TODO: Implement handlers in Phase 10A Week 3-4
+pub mod health;
+
+pub use health::{health, live, ready, version};
