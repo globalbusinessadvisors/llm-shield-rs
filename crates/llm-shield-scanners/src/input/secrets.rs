@@ -80,11 +80,11 @@ pub enum SecretCategory {
 }
 
 /// Secret pattern definition
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 struct SecretPattern {
     name: &'static str,
     category: SecretCategory,
-    pattern: LazyLock<Regex>,
+    pattern: &'static LazyLock<Regex>,
     severity: Severity,
 }
 
@@ -264,19 +264,19 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "AWS Access Key",
                         category: SecretCategory::AWS,
-                        pattern: AWS_ACCESS_KEY,
+                        pattern: &AWS_ACCESS_KEY,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "AWS Secret Key",
                         category: SecretCategory::AWS,
-                        pattern: AWS_SECRET_KEY,
+                        pattern: &AWS_SECRET_KEY,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "AWS MWS Key",
                         category: SecretCategory::AWS,
-                        pattern: AWS_MWS_KEY,
+                        pattern: &AWS_MWS_KEY,
                         severity: Severity::Critical,
                     });
                 }
@@ -284,13 +284,13 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Azure Client Secret",
                         category: SecretCategory::Azure,
-                        pattern: AZURE_CLIENT_SECRET,
+                        pattern: &AZURE_CLIENT_SECRET,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "Azure Connection String",
                         category: SecretCategory::Azure,
-                        pattern: AZURE_CONNECTION_STRING,
+                        pattern: &AZURE_CONNECTION_STRING,
                         severity: Severity::Critical,
                     });
                 }
@@ -298,13 +298,13 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "GCP API Key",
                         category: SecretCategory::GCP,
-                        pattern: GCP_API_KEY,
+                        pattern: &GCP_API_KEY,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "GCP Service Account",
                         category: SecretCategory::GCP,
-                        pattern: GCP_SERVICE_ACCOUNT,
+                        pattern: &GCP_SERVICE_ACCOUNT,
                         severity: Severity::Critical,
                     });
                 }
@@ -312,13 +312,13 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "GitHub Token",
                         category: SecretCategory::GitHub,
-                        pattern: GITHUB_TOKEN,
+                        pattern: &GITHUB_TOKEN,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "GitHub Classic Token",
                         category: SecretCategory::GitHub,
-                        pattern: GITHUB_CLASSIC_TOKEN,
+                        pattern: &GITHUB_CLASSIC_TOKEN,
                         severity: Severity::Critical,
                     });
                 }
@@ -326,7 +326,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "GitLab Token",
                         category: SecretCategory::GitLab,
-                        pattern: GITLAB_TOKEN,
+                        pattern: &GITLAB_TOKEN,
                         severity: Severity::Critical,
                     });
                 }
@@ -334,13 +334,13 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Slack Token",
                         category: SecretCategory::Slack,
-                        pattern: SLACK_TOKEN,
+                        pattern: &SLACK_TOKEN,
                         severity: Severity::High,
                     });
                     patterns.push(SecretPattern {
                         name: "Slack Webhook",
                         category: SecretCategory::Slack,
-                        pattern: SLACK_WEBHOOK,
+                        pattern: &SLACK_WEBHOOK,
                         severity: Severity::High,
                     });
                 }
@@ -348,7 +348,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Stripe API Key",
                         category: SecretCategory::Stripe,
-                        pattern: STRIPE_KEY,
+                        pattern: &STRIPE_KEY,
                         severity: Severity::Critical,
                     });
                 }
@@ -356,13 +356,13 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Twilio API Key",
                         category: SecretCategory::Twilio,
-                        pattern: TWILIO_API_KEY,
+                        pattern: &TWILIO_API_KEY,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "Twilio Account SID",
                         category: SecretCategory::Twilio,
-                        pattern: TWILIO_ACCOUNT_SID,
+                        pattern: &TWILIO_ACCOUNT_SID,
                         severity: Severity::High,
                     });
                 }
@@ -370,7 +370,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "SendGrid API Key",
                         category: SecretCategory::SendGrid,
-                        pattern: SENDGRID_KEY,
+                        pattern: &SENDGRID_KEY,
                         severity: Severity::Critical,
                     });
                 }
@@ -378,7 +378,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Mailgun API Key",
                         category: SecretCategory::Mailgun,
-                        pattern: MAILGUN_KEY,
+                        pattern: &MAILGUN_KEY,
                         severity: Severity::Critical,
                     });
                 }
@@ -386,7 +386,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "OpenAI API Key",
                         category: SecretCategory::OpenAI,
-                        pattern: OPENAI_API_KEY,
+                        pattern: &OPENAI_API_KEY,
                         severity: Severity::Critical,
                     });
                 }
@@ -394,7 +394,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Anthropic API Key",
                         category: SecretCategory::Anthropic,
-                        pattern: ANTHROPIC_API_KEY,
+                        pattern: &ANTHROPIC_API_KEY,
                         severity: Severity::Critical,
                     });
                 }
@@ -402,7 +402,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Hugging Face Token",
                         category: SecretCategory::HuggingFace,
-                        pattern: HUGGINGFACE_TOKEN,
+                        pattern: &HUGGINGFACE_TOKEN,
                         severity: Severity::High,
                     });
                 }
@@ -410,13 +410,13 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Database URL",
                         category: SecretCategory::DatabaseURLs,
-                        pattern: DATABASE_URL,
+                        pattern: &DATABASE_URL,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "Connection String",
                         category: SecretCategory::DatabaseURLs,
-                        pattern: CONNECTION_STRING,
+                        pattern: &CONNECTION_STRING,
                         severity: Severity::Critical,
                     });
                 }
@@ -424,25 +424,25 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "RSA Private Key",
                         category: SecretCategory::PrivateKeys,
-                        pattern: RSA_PRIVATE_KEY,
+                        pattern: &RSA_PRIVATE_KEY,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "EC Private Key",
                         category: SecretCategory::PrivateKeys,
-                        pattern: EC_PRIVATE_KEY,
+                        pattern: &EC_PRIVATE_KEY,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "OpenSSH Private Key",
                         category: SecretCategory::PrivateKeys,
-                        pattern: OPENSSH_PRIVATE_KEY,
+                        pattern: &OPENSSH_PRIVATE_KEY,
                         severity: Severity::Critical,
                     });
                     patterns.push(SecretPattern {
                         name: "PGP Private Key",
                         category: SecretCategory::PrivateKeys,
-                        pattern: PGP_PRIVATE_KEY,
+                        pattern: &PGP_PRIVATE_KEY,
                         severity: Severity::Critical,
                     });
                 }
@@ -450,7 +450,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "JWT Token",
                         category: SecretCategory::JWT,
-                        pattern: JWT_TOKEN,
+                        pattern: &JWT_TOKEN,
                         severity: Severity::High,
                     });
                 }
@@ -458,7 +458,7 @@ impl Secrets {
                     patterns.push(SecretPattern {
                         name: "Generic Secret",
                         category: SecretCategory::Generic,
-                        pattern: GENERIC_SECRET,
+                        pattern: &GENERIC_SECRET,
                         severity: Severity::High,
                     });
                 }
@@ -616,20 +616,26 @@ impl Scanner for Secrets {
             .max()
             .unwrap_or(Severity::High);
 
+        let description = format!("Found {} exposed secret(s)", matches.len());
         let risk_factor = RiskFactor::new(
             "exposed_secrets",
-            format!("Found {} exposed secret(s)", matches.len()),
+            &description,
             max_severity,
             1.0,
         );
 
         let sanitized_text = self.redact_text(input, &matches);
 
-        Ok(ScanResult::new(sanitized_text, false, 1.0)
-            .with_entities(entities)
+        let mut result = ScanResult::new(sanitized_text, false, 1.0)
             .with_risk_factor(risk_factor)
             .with_metadata("secrets_count", matches.len())
-            .with_metadata("secret_types", matches.iter().map(|m| m.pattern_name).collect::<Vec<_>>().join(", ")))
+            .with_metadata("secret_types", matches.iter().map(|m| m.pattern_name).collect::<Vec<_>>().join(", "));
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 
     fn scanner_type(&self) -> ScannerType {

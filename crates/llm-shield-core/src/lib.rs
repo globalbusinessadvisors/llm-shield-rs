@@ -25,6 +25,7 @@ pub mod types;
 pub mod vault;
 
 // Re-exports for convenience
+pub use async_trait::async_trait;
 pub use error::{Error, Result};
 pub use result::{Entity, RiskFactor, ScanResult, Severity};
 pub use scanner::{InputScanner, OutputScanner, Scanner, ScannerType};

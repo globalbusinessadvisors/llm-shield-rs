@@ -314,9 +314,10 @@ impl Scanner for InvisibleText {
             })
             .collect();
 
+        let description = format!("Found {} invisible character(s)", matches.len());
         let risk_factor = RiskFactor::new(
             "invisible_characters",
-            format!("Found {} invisible character(s)", matches.len()),
+            &description,
             if risk_score >= 0.7 {
                 Severity::High
             } else if risk_score >= 0.4 {
@@ -329,11 +330,16 @@ impl Scanner for InvisibleText {
 
         let sanitized_text = self.sanitize_text(input, &matches);
 
-        Ok(ScanResult::new(sanitized_text, false, risk_score)
-            .with_entities(entities)
+        let mut result = ScanResult::new(sanitized_text, false, risk_score)
             .with_risk_factor(risk_factor)
             .with_metadata("invisible_count", matches.len())
-            .with_metadata("invisible_density", (matches.len() as f32 / input.len().max(1) as f32).to_string()))
+            .with_metadata("invisible_density", (matches.len() as f32 / input.len().max(1) as f32).to_string());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 
     fn scanner_type(&self) -> ScannerType {

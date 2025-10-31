@@ -184,7 +184,7 @@ impl MaliciousURLs {
 
             let phishing_count = phishing_keywords
                 .iter()
-                .filter(|k| url_lower.contains(k))
+                .filter(|&k| url_lower.contains(k))
                 .count();
 
             if phishing_count >= 2 {
@@ -294,21 +294,27 @@ impl MaliciousURLs {
             Severity::Low
         };
 
+        let description = format!(
+            "LLM response contains {} potentially malicious URL(s)",
+            threats.len()
+        );
         let risk_factor = RiskFactor::new(
             "malicious_url",
-            format!(
-                "LLM response contains {} potentially malicious URL(s)",
-                threats.len()
-            ),
+            &description,
             severity,
             max_confidence,
         );
 
-        Ok(ScanResult::new(output.to_string(), false, max_confidence)
-            .with_entities(entities)
+        let mut result = ScanResult::new(output.to_string(), false, max_confidence)
             .with_risk_factor(risk_factor)
             .with_metadata("urls_found", urls.len().to_string())
-            .with_metadata("malicious_urls_found", threats.len()))
+            .with_metadata("malicious_urls_found", threats.len());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 }
 

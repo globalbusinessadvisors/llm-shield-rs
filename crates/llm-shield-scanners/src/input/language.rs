@@ -317,9 +317,10 @@ impl Scanner for Language {
             metadata,
         };
 
+        let description = format!("Text in disallowed language: {} ({})", detection.name, detection.code);
         let risk_factor = RiskFactor::new(
             "disallowed_language",
-            format!("Text in disallowed language: {} ({})", detection.name, detection.code),
+            &description,
             Severity::High,
             1.0,
         );

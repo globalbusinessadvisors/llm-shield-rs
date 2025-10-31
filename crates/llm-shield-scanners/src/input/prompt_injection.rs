@@ -304,19 +304,25 @@ impl Scanner for PromptInjection {
             Severity::Medium
         };
 
+        let description = format!("Detected {} injection indicator(s)", indicators.len());
         let risk_factor = RiskFactor::new(
             "prompt_injection",
-            format!("Detected {} injection indicator(s)", indicators.len()),
+            &description,
             severity,
             score,
         );
 
-        Ok(ScanResult::new(input.to_string(), false, score)
-            .with_entities(entities)
+        let mut result = ScanResult::new(input.to_string(), false, score)
             .with_risk_factor(risk_factor)
             .with_metadata("injection_score", score.to_string())
             .with_metadata("indicator_count", indicators.len())
-            .with_metadata("detection_method", if self.config.use_fallback { "heuristic" } else { "ml" }))
+            .with_metadata("detection_method", if self.config.use_fallback { "heuristic" } else { "ml" });
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 
     fn scanner_type(&self) -> ScannerType {

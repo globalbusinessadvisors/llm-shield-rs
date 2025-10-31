@@ -28,6 +28,7 @@ regex = { workspace = true }
 unicode-normalization = { workspace = true }
 unicode-segmentation = { workspace = true }
 aho-corasick = "1.1"
+url = "2.5"
 
 # Observability
 tracing = { workspace = true }

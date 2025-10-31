@@ -211,21 +211,27 @@ impl RegexOutput {
                     .max()
                     .unwrap_or(&Severity::Low);
 
+                let description = format!(
+                    "Output matches {} forbidden pattern(s)",
+                    matches.len()
+                );
                 let risk_factor = RiskFactor::new(
                     "regex_pattern_match",
-                    format!(
-                        "Output matches {} forbidden pattern(s)",
-                        matches.len()
-                    ),
+                    &description,
                     *max_severity,
                     0.9,
                 );
 
-                Ok(ScanResult::new(output.to_string(), false, 0.9)
-                    .with_entities(entities)
+                let mut result = ScanResult::new(output.to_string(), false, 0.9)
                     .with_risk_factor(risk_factor)
                     .with_metadata("matches_found", matches.len())
-                    .with_metadata("match_mode", "denylist"))
+                    .with_metadata("match_mode", "denylist");
+
+                for entity in entities {
+                    result = result.with_entity(entity);
+                }
+
+                Ok(result)
             }
             MatchMode::AllowList => {
                 // In allow list mode, no match = fail
@@ -243,10 +249,10 @@ impl RegexOutput {
                     0.8,
                 );
 
-                let mut result = ScanResult::new(output.to_string(), false, 0.8);
-                result.risk_factors.push(risk_factor);
-                result.metadata.insert("matches_found".to_string(), "0".to_string());
-                result.metadata.insert("match_mode".to_string(), "allowlist".to_string());
+                let result = ScanResult::new(output.to_string(), false, 0.8)
+                    .with_risk_factor(risk_factor)
+                    .with_metadata("matches_found", 0)
+                    .with_metadata("match_mode", "allowlist");
 
                 Ok(result)
             }

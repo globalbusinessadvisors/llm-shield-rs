@@ -336,21 +336,27 @@ impl Bias {
             Severity::Low
         };
 
+        let description = format!(
+            "LLM response contains biased language ({} instance(s))",
+            significant_matches.len()
+        );
         let risk_factor = RiskFactor::new(
             "biased_language",
-            format!(
-                "LLM response contains biased language ({} instance(s))",
-                significant_matches.len()
-            ),
+            &description,
             severity,
             max_confidence,
         );
 
-        Ok(ScanResult::new(output.to_string(), false, max_confidence)
-            .with_entities(entities)
+        let mut result = ScanResult::new(output.to_string(), false, max_confidence)
             .with_risk_factor(risk_factor)
             .with_metadata("bias_detected", "true")
-            .with_metadata("bias_count", significant_matches.len()))
+            .with_metadata("bias_count", significant_matches.len());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 }
 

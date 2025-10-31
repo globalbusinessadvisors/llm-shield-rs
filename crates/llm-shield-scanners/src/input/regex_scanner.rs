@@ -135,9 +135,10 @@ impl Scanner for RegexScanner {
             return Ok(ScanResult::pass(input.to_string()));
         }
 
+        let description = format!("Found {} regex match(es)", entities.len());
         let risk_factor = RiskFactor::new(
             "regex_match",
-            format!("Found {} regex match(es)", entities.len()),
+            &description,
             if max_risk >= 0.7 {
                 Severity::High
             } else {

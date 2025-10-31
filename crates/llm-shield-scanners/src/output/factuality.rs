@@ -238,12 +238,13 @@ impl Factuality {
             Severity::Low
         };
 
+        let description = format!(
+            "Response has low factuality confidence: {:.2} (threshold: {:.2})",
+            analysis.confidence_score, self.config.min_confidence_threshold
+        );
         let risk_factor = RiskFactor::new(
             "low_factuality_confidence",
-            format!(
-                "Response has low factuality confidence: {:.2} (threshold: {:.2})",
-                analysis.confidence_score, self.config.min_confidence_threshold
-            ),
+            &description,
             severity,
             1.0 - analysis.confidence_score,
         );

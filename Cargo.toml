@@ -7,6 +7,7 @@ members = [
     "crates/llm-shield-scanners",
     "crates/llm-shield-secrets",
     "crates/llm-shield-anonymize",
+    "crates/llm-shield-api",
     "crates/llm-shield-wasm",
 ]
 

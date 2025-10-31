@@ -255,13 +255,15 @@ impl Relevance {
             Severity::Low
         };
 
+        let description = if analysis.is_generic {
+            "LLM response is generic or evasive".to_string()
+        } else {
+            format!("LLM response is not relevant to prompt (score: {:.2})", analysis.final_score)
+        };
+
         let risk_factor = RiskFactor::new(
             "irrelevant_response",
-            if analysis.is_generic {
-                "LLM response is generic or evasive".to_string()
-            } else {
-                format!("LLM response is not relevant to prompt (score: {:.2})", analysis.final_score)
-            },
+            &description,
             severity,
             1.0 - analysis.final_score,
         );

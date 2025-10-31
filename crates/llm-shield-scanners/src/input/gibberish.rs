@@ -401,9 +401,10 @@ impl Scanner for Gibberish {
             })
             .collect();
 
+        let description = format!("Detected {} gibberish indicator(s)", indicators.len());
         let risk_factor = RiskFactor::new(
             "gibberish_detected",
-            format!("Detected {} gibberish indicator(s)", indicators.len()),
+            &description,
             if gibberish_score >= 0.8 {
                 Severity::High
             } else if gibberish_score >= 0.6 {
@@ -414,11 +415,16 @@ impl Scanner for Gibberish {
             gibberish_score,
         );
 
-        Ok(ScanResult::new(input.to_string(), false, gibberish_score)
-            .with_entities(entities)
+        let mut result = ScanResult::new(input.to_string(), false, gibberish_score)
             .with_risk_factor(risk_factor)
             .with_metadata("gibberish_score", gibberish_score.to_string())
-            .with_metadata("indicators_count", indicators.len()))
+            .with_metadata("indicators_count", indicators.len());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 
     fn scanner_type(&self) -> ScannerType {

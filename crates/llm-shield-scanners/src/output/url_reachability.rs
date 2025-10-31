@@ -245,13 +245,14 @@ impl URLReachability {
                 Severity::Low
             };
 
+            let description = format!(
+                "{} of {} URL(s) are unreachable",
+                unreachable_urls.len(),
+                urls.len()
+            );
             let risk_factor = RiskFactor::new(
                 "unreachable_urls",
-                format!(
-                    "{} of {} URL(s) are unreachable",
-                    unreachable_urls.len(),
-                    urls.len()
-                ),
+                &description,
                 severity,
                 unreachable_urls.len() as f32 / urls.len() as f32,
             );
@@ -260,11 +261,14 @@ impl URLReachability {
                 output.to_string(),
                 false,
                 unreachable_urls.len() as f32 / urls.len() as f32,
-            );
-            result.entities = entities;
-            result.risk_factors.push(risk_factor);
-            result.metadata.insert("urls_found".to_string(), urls.len().to_string());
-            result.metadata.insert("unreachable_urls".to_string(), unreachable_urls.len().to_string());
+            )
+            .with_risk_factor(risk_factor)
+            .with_metadata("urls_found", urls.len())
+            .with_metadata("unreachable_urls", unreachable_urls.len());
+
+            for entity in entities {
+                result = result.with_entity(entity);
+            }
 
             Ok(result)
         } else {

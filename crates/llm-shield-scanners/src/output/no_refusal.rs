@@ -229,18 +229,24 @@ impl NoRefusal {
             Severity::Low
         };
 
+        let description = format!("LLM refused to answer (detected {} pattern(s))", matches.len());
         let risk_factor = RiskFactor::new(
             "llm_refusal",
-            format!("LLM refused to answer (detected {} pattern(s))", matches.len()),
+            &description,
             severity,
             score,
         );
 
-        Ok(ScanResult::new(output.to_string(), false, score)
-            .with_entities(entities)
+        let mut result = ScanResult::new(output.to_string(), false, score)
             .with_risk_factor(risk_factor)
             .with_metadata("refusal_score", score.to_string())
-            .with_metadata("refusal_patterns", matches.len()))
+            .with_metadata("refusal_patterns", matches.len());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 }
 

@@ -208,19 +208,26 @@ impl Scanner for BanSubstrings {
             })
             .collect();
 
+        let description = format!("Found {} banned substring(s)", matches.len());
         let risk_factor = RiskFactor::new(
             "banned_content",
-            format!("Found {} banned substring(s)", matches.len()),
+            &description,
             Severity::High,
             1.0,
         );
 
         let sanitized_text = self.redact_text(input, &matches);
 
-        Ok(ScanResult::new(sanitized_text, false, 1.0)
+        let mut result = ScanResult::new(sanitized_text, false, 1.0)
             .with_risk_factor(risk_factor)
             .with_metadata("matches_count", entities.len())
-            .with_metadata("patterns_matched", matches.iter().map(|(_, _, p)| p).collect::<Vec<_>>()))
+            .with_metadata("patterns_matched", matches.iter().map(|(_, _, p)| p).collect::<Vec<_>>());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 
     fn scanner_type(&self) -> ScannerType {

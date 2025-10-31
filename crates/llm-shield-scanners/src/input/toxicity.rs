@@ -134,7 +134,7 @@ impl Toxicity {
     fn detect_heuristic(&self, text: &str) -> (f32, Vec<ToxicityMatch>) {
         let text_lower = text.to_lowercase();
         let mut matches = Vec::new();
-        let mut max_score = 0.0;
+        let mut max_score: f32 = 0.0;
 
         // Severe toxic words (strong profanity, slurs)
         let severe_toxic = [
@@ -167,7 +167,7 @@ impl Toxicity {
                     score: 0.95,
                     text: pattern.to_string(),
                 });
-                max_score = max_score.max(0.95);
+                max_score = max_score.max(0.95f32);
             }
         }
 
@@ -185,7 +185,7 @@ impl Toxicity {
                 score,
                 text: format!("{} insults", insult_count),
             });
-            max_score = max_score.max(score);
+            max_score = f32::max(max_score, score);
         }
 
         // Check threats
@@ -196,7 +196,7 @@ impl Toxicity {
                     score: 0.9,
                     text: pattern.to_string(),
                 });
-                max_score = max_score.max(0.9);
+                max_score = max_score.max(0.9f32);
             }
         }
 
@@ -214,7 +214,7 @@ impl Toxicity {
                 score,
                 text: format!("{} hate indicators", hate_count),
             });
-            max_score = max_score.max(score);
+            max_score = f32::max(max_score, score);
         }
 
         // General toxicity based on multiple factors
@@ -282,18 +282,24 @@ impl Scanner for Toxicity {
             Severity::Medium
         };
 
+        let description = format!("Detected {} toxicity indicator(s)", matches.len());
         let risk_factor = RiskFactor::new(
             "toxic_content",
-            format!("Detected {} toxicity indicator(s)", matches.len()),
+            &description,
             severity,
             max_score,
         );
 
-        Ok(ScanResult::new(input.to_string(), false, max_score)
-            .with_entities(entities)
+        let mut result = ScanResult::new(input.to_string(), false, max_score)
             .with_risk_factor(risk_factor)
             .with_metadata("toxicity_score", max_score.to_string())
-            .with_metadata("categories", matches.len()))
+            .with_metadata("categories", matches.len());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 
     fn scanner_type(&self) -> ScannerType {

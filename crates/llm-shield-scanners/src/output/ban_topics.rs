@@ -293,20 +293,26 @@ impl BanTopics {
             .map(|m| m.confidence)
             .fold(0.0f32, f32::max);
 
+        let description = format!(
+            "LLM response contains {} banned topic(s)",
+            significant_matches.len()
+        );
         let risk_factor = RiskFactor::new(
             "banned_topic",
-            format!(
-                "LLM response contains {} banned topic(s)",
-                significant_matches.len()
-            ),
+            &description,
             *max_severity,
             max_confidence,
         );
 
-        Ok(ScanResult::new(output.to_string(), false, max_confidence)
-            .with_entities(entities)
+        let mut result = ScanResult::new(output.to_string(), false, max_confidence)
             .with_risk_factor(risk_factor)
-            .with_metadata("banned_topics_found", significant_matches.len()))
+            .with_metadata("banned_topics_found", significant_matches.len());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 }
 

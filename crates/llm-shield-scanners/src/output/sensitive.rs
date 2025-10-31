@@ -440,17 +440,23 @@ impl Sensitive {
             Severity::Low
         };
 
+        let description = format!("LLM response contains {} sensitive entities", matches.len());
         let risk_factor = RiskFactor::new(
             "sensitive_data_leak",
-            format!("LLM response contains {} sensitive entities", matches.len()),
+            &description,
             severity,
             0.9,
         );
 
-        Ok(ScanResult::new(output.to_string(), false, 0.9)
-            .with_entities(entities)
+        let mut result = ScanResult::new(output.to_string(), false, 0.9)
             .with_risk_factor(risk_factor)
-            .with_metadata("sensitive_entities_found", matches.len()))
+            .with_metadata("sensitive_entities_found", matches.len());
+
+        for entity in entities {
+            result = result.with_entity(entity);
+        }
+
+        Ok(result)
     }
 }
 

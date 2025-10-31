@@ -89,12 +89,13 @@ impl Scanner for TokenLimit {
 
         let risk_score = (token_count as f32 / self.config.limit as f32).min(1.0);
 
+        let description = format!(
+            "Token count {} exceeds limit {}",
+            token_count, self.config.limit
+        );
         let risk_factor = RiskFactor::new(
             "token_limit_exceeded",
-            format!(
-                "Token count {} exceeds limit {}",
-                token_count, self.config.limit
-            ),
+            &description,
             Severity::Medium,
             risk_score,
         );

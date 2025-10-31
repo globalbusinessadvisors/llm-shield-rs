@@ -227,9 +227,10 @@ impl Scanner for Sentiment {
             metadata,
         };
 
+        let description = format!("Detected {} sentiment", detected_sentiment.as_str());
         let risk_factor = RiskFactor::new(
             "disallowed_sentiment",
-            format!("Detected {} sentiment", detected_sentiment.as_str()),
+            &description,
             Severity::Medium,
             confidence,
         );

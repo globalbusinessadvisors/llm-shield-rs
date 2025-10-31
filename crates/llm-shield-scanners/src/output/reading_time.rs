@@ -173,12 +173,13 @@ impl ReadingTime {
                     metadata,
                 };
 
+                let description = format!(
+                    "Response too short: {} seconds (min: {})",
+                    stats.reading_time_seconds, self.config.min_time_seconds
+                );
                 let risk_factor = RiskFactor::new(
                     "reading_time_too_short",
-                    format!(
-                        "Response too short: {} seconds (min: {})",
-                        stats.reading_time_seconds, self.config.min_time_seconds
-                    ),
+                    &description,
                     Severity::Low,
                     0.7,
                 );
@@ -206,12 +207,13 @@ impl ReadingTime {
                     metadata,
                 };
 
+                let description = format!(
+                    "Response too long: {} seconds (max: {})",
+                    stats.reading_time_seconds, self.config.max_time_seconds
+                );
                 let risk_factor = RiskFactor::new(
                     "reading_time_too_long",
-                    format!(
-                        "Response too long: {} seconds (max: {})",
-                        stats.reading_time_seconds, self.config.max_time_seconds
-                    ),
+                    &description,
                     Severity::Medium,
                     0.8,
                 );

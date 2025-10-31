@@ -1,0 +1,78 @@
+[package]
+name = "llm-shield-api"
+version = "0.1.0"
+edition = "2021"
+authors = ["LLM Shield Contributors"]
+description = "Production-grade REST API for LLM Shield"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["macros"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.5", features = ["trace", "timeout", "limit", "compression-gzip", "cors"] }
+
+# Async runtime
+tokio = { workspace = true, features = ["signal"] }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Validation
+validator = { version = "0.18", features = ["derive"] }
+
+# Configuration
+config = { version = "0.14", features = ["toml"] }
+
+# Observability
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+metrics = "0.23"
+metrics-exporter-prometheus = "0.15"
+
+# OpenAPI / Swagger
+utoipa = { version = "4.2", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "7.1", features = ["axum"] }
+
+# Rate limiting
+governor = "0.6"
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = "1.0"
+
+# Utilities
+uuid = { version = "1.11", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+num_cpus = "1.16"
+
+# LLM Shield dependencies
+llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-scanners = { path = "../llm-shield-scanners" }
+llm-shield-models = { path = "../llm-shield-models" }
+llm-shield-anonymize = { path = "../llm-shield-anonymize" }
+
+[dev-dependencies]
+# Testing
+tokio-test = "0.4"
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+mime = "0.3"
+
+# Benchmarking
+criterion = { workspace = true }
+
+[[bench]]
+name = "api_bench"
+harness = false
+
+[features]
+default = []
+redis = ["dep:redis"]
+
+# Optional dependencies for advanced features
+[dependencies.redis]
+version = "0.26"
+optional = true
+features = ["tokio-comp", "connection-manager"]
