@@ -1,3 +1,5 @@
 //! Business logic services
 
-// TODO: Implement services in Phase 10A Week 3-4
+pub mod scanner_service;
+
+pub use scanner_service::ScannerService;

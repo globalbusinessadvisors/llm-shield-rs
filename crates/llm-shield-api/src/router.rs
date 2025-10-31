@@ -1,8 +1,9 @@
 //! Route configuration
 
-use axum::{routing::get, Router};
+use axum::{routing::{get, post}, Router};
 
 use crate::handlers;
+use crate::state::AppState;
 
 /// Create the application router
 ///
@@ -11,12 +12,27 @@ use crate::handlers;
 /// - GET /health/ready - Readiness probe
 /// - GET /health/live - Liveness probe
 /// - GET /version - Version information
+/// - POST /v1/scan/prompt - Scan user prompt
 pub fn create_router() -> Router {
     Router::new()
         .route("/health", get(handlers::health))
         .route("/health/ready", get(handlers::ready))
         .route("/health/live", get(handlers::live))
         .route("/version", get(handlers::version))
+}
+
+/// Create the application router with state
+pub fn create_router_with_state(state: AppState) -> Router {
+    Router::new()
+        .route("/health", get(handlers::health))
+        .route("/health/ready", get(handlers::ready))
+        .route("/health/live", get(handlers::live))
+        .route("/version", get(handlers::version))
+        .route("/v1/scan/prompt", post(handlers::scan_prompt))
+        .route("/v1/scan/output", post(handlers::scan_output))
+        .route("/v1/scan/batch", post(handlers::scan_batch))
+        .route("/v1/scanners", get(handlers::list_scanners))
+        .with_state(state)
 }
 
 #[cfg(test)]
