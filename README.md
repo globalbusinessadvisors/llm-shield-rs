@@ -777,7 +777,7 @@ cd crates/llm-shield-wasm && wasm-pack build
 
 - **Issues:** [GitHub Issues](https://github.com/globalbusinessadvisors/llm-shield-rs/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/globalbusinessadvisors/llm-shield-rs/discussions)
-- **Email:** support@globalbusinessadvisors.com
+- **Email:** support@globalbusinessadvisors.co
 
 ---
 
