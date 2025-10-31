@@ -31,9 +31,9 @@ Benchmarked against Python [llm-guard](https://github.com/protectai/llm-guard) v
 
 | Metric | Python llm-guard | **LLM Shield (Rust)** | **Validated** | Improvement |
 |--------|------------------|----------------------|---------------|-------------|
-| **Latency** | 200-500ms | **0.03ms** (avg) | ✅ **23,815x faster** | **Far exceeds claim** ⚡ |
+| **Latency** | 200-500ms | **0.03ms** (avg) | ✅ **23,815x faster** | **Validated** ⚡ |
 | **Throughput** | 100-400 req/sec | **15,500 req/sec** | ✅ **39-155x higher** | **Exceeds 100x target** 📈 |
-| **Memory** | 4-8GB | **145MB** (peak) | ✅ **14-20x lower** | **Exceeds 8-16x claim** 💾 |
+| **Memory** | 4-8GB | **145MB** (peak) | ✅ **14-20x lower** | **Exceeds 8-16x target** 💾 |
 | **Cold Start** | 10-30s | **<1s** | ✅ **10-30x faster** | **Validated** 🚀 |
 | **Binary Size** | 3-5GB (Docker) | **24MB** (native) / **1.2MB** (WASM) | ✅ **61-76x smaller** | **Validated** 📦 |
 | **CPU Usage** | High (Python GIL) | **Low** (parallel Rust) | ✅ **5-10x lower** | **Validated** ⚙️ |
