@@ -5,8 +5,13 @@ pub mod request;
 pub mod response;
 
 pub use error::{ApiError, ErrorResponse};
-pub use request::*;
-pub use response::*;
+pub use request::{
+    AnonymizeRequest, BatchScanRequest, DeanonymizeRequest, ScanOutputRequest, ScanPromptRequest,
+};
+pub use response::{
+    AnonymizeResponse, AnonymizedEntityDto, BatchScanResponse, DeanonymizeResponse, EntityDto,
+    ListScannersResponse, RiskFactorDto, ScanResponse, ScannerMetadataResponse, ScannerResult,
+};
 
 /// Generic API response wrapper
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
