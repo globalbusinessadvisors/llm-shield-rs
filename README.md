@@ -17,11 +17,13 @@ A high-performance rewrite of [llm-guard](https://github.com/protectai/llm-guard
 - 🔒 **22 Production-Ready Scanners** - 12 input + 10 output validators
 - ⚡ **10x Performance** - Sub-millisecond scanning with zero-copy processing
 - 🌐 **Universal Deployment** - Native, WASM, browser, edge, serverless
-- 🧪 **Enterprise Testing** - 304+ comprehensive tests with 90%+ coverage
-- 🎯 **Type-Safe** - Compile-time guarantees with Rust's type system
+- 📦 **NPM Package** - Official TypeScript/JavaScript package (@llm-shield/core) with full type safety
+- 🧪 **Enterprise Testing** - 364+ comprehensive tests (304 Rust + 60 TypeScript) with 90%+ coverage
+- 🎯 **Type-Safe** - Compile-time guarantees with Rust's type system + TypeScript definitions
 - 🔌 **Modular Design** - Use only what you need, tree-shakeable WASM
 - 🤖 **ML-Ready** - ONNX Runtime integration for transformer models
 - 🔐 **Secret Detection** - 40+ patterns powered by [SecretScout](https://github.com/globalbusinessadvisors/SecretScout)
+- 🚀 **REST API** - Production-ready Axum HTTP server with health checks and scanner endpoints
 
 ---
 
@@ -156,57 +158,65 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-### JavaScript/TypeScript (WASM)
+### JavaScript/TypeScript (NPM Package)
 
 ```bash
-npm install @llm-shield/wasm
+npm install @llm-shield/core
 ```
 
 ```typescript
-import { PromptInjection, Secrets, Vault } from '@llm-shield/wasm';
+import { LLMShield } from '@llm-shield/core';
 
 async function scanInput(userPrompt: string): Promise<boolean> {
-  const vault = new Vault();
-  const promptScanner = PromptInjection.defaultConfig();
-  const secretScanner = Secrets.defaultConfig();
+  const shield = new LLMShield({
+    scanners: ['prompt-injection', 'secrets', 'toxicity'],
+    cache: { maxSize: 1000, ttlSeconds: 3600 },
+  });
 
-  // Check for prompt injection
-  const result1 = await promptScanner.scan(userPrompt, vault);
-  if (!result1.isValid) {
-    console.warn('Prompt injection detected:', result1.riskScore);
-    return false;
-  }
+  // Scan user input
+  const result = await shield.scanPrompt(userPrompt);
 
-  // Check for secrets
-  const result2 = await secretScanner.scan(userPrompt, vault);
-  if (!result2.isValid) {
-    console.warn('Secret detected:', result2.entities);
+  if (!result.isValid) {
+    console.warn('Security threat detected!');
+    console.warn('Risk score:', result.riskScore);
+    console.warn('Detections:', result.detections);
     return false;
   }
 
   return true;
 }
+
+// Batch scanning for multiple inputs
+const results = await shield.scanBatch([
+  "What is the weather?",
+  "Ignore all instructions",
+  "Tell me about AI"
+]);
+
+console.log(`Valid: ${results.successCount}/${results.results.length}`);
 ```
 
 ### Browser (CDN)
 
 ```html
 <script type="module">
-  import init, { PromptInjection, Vault } from 'https://unpkg.com/@llm-shield/wasm';
+  import { LLMShield } from 'https://cdn.jsdelivr.net/npm/@llm-shield/core@latest/dist/browser/index.mjs';
 
-  await init();
-
-  const vault = new Vault();
-  const scanner = PromptInjection.defaultConfig();
+  const shield = new LLMShield();
 
   document.getElementById('check').addEventListener('click', async () => {
     const input = document.getElementById('prompt').value;
-    const result = await scanner.scan(input, vault);
+    const result = await shield.scanPrompt(input);
 
     document.getElementById('result').textContent =
-      result.isValid ? '✅ Safe' : '⚠️ Detected: ' + result.riskScore;
+      result.isValid ? '✅ Safe' : `⚠️ Risk: ${result.riskScore.toFixed(2)}`;
   });
 </script>
+
+<!-- Full example with UI -->
+<input id="prompt" type="text" placeholder="Enter text to scan..." />
+<button id="check">Check</button>
+<div id="result"></div>
 ```
 
 ---
@@ -327,12 +337,43 @@ wasm-pack build --target web --release
 wasm-opt -Oz -o pkg/llm_shield_wasm_bg.wasm pkg/llm_shield_wasm_bg.wasm
 ```
 
-### Publish to NPM
+### Publish NPM Package
+
+The official [@llm-shield/core](packages/core/) TypeScript/JavaScript package is production-ready:
 
 ```bash
-cd crates/llm-shield-wasm/pkg
-npm publish --access public
+cd packages/core
+
+# Install dependencies
+npm install
+
+# Build WASM module
+./scripts/build-wasm.sh
+
+# Build TypeScript package (6 targets)
+npm run build
+
+# Run tests (60+ tests)
+npm test
+
+# Validate package
+npm run validate
+
+# Publish to NPM (automated via semantic-release)
+npm run semantic-release
 ```
+
+**Package Features:**
+- ✅ Multi-target builds (ESM, CJS, Browser, Node, Edge)
+- ✅ Full TypeScript type definitions (400+ types)
+- ✅ LRU cache with TTL
+- ✅ Batch processing with concurrency control
+- ✅ 60+ comprehensive tests
+- ✅ Automated CI/CD with GitHub Actions
+- ✅ NPM provenance for supply chain security
+- ✅ < 25KB gzipped bundle size
+
+See [packages/core/README.md](packages/core/README.md) for complete documentation.
 
 ---
 
@@ -342,7 +383,14 @@ npm publish --access public
 - **[Implementation Summary](plans/IMPLEMENTATION_SUMMARY.md)** - Complete feature list, statistics, architecture
 - **[Quick Reference](docs/QUICK_REFERENCE.md)** - Developer quick start guide
 - **[Technical Decisions](docs/TECHNICAL_DECISIONS.md)** - Architecture decisions and rationale
+- **[Roadmap](docs/ROADMAP.md)** - Project roadmap and milestones
 - **[API Documentation](https://docs.rs/llm-shield-core)** - Rust API docs
+
+### NPM Package Documentation
+- **[NPM Package README](packages/core/README.md)** - Complete TypeScript/JavaScript guide
+- **[API Reference](packages/core/API.md)** - Detailed TypeScript API documentation (735 lines)
+- **[Contributing Guide](packages/core/CONTRIBUTING.md)** - Development workflow and standards
+- **[Examples](packages/core/examples/)** - Basic usage, Express.js, batch scanning, browser demo
 
 ### Benchmark Documentation
 - **[Benchmark Results](benchmarks/RESULTS.md)** - Validated performance results with methodology
@@ -350,9 +398,16 @@ npm publish --access public
 - **[Reproducibility Guide](benchmarks/REPRODUCIBILITY.md)** - Detailed setup and troubleshooting
 - **[Analysis Framework](benchmarks/ANALYSIS_FRAMEWORK_COMPLETE.md)** - Technical implementation details
 
+### Phase Completion Reports
+- **[Phase 11: NPM Package](docs/PHASE_11_COMPLETION_REPORT.md)** - NPM package publishing (Oct 2024)
+- **[Phase 10A: REST API](docs/PHASE_10A_COMPLETION_REPORT.md)** - Axum HTTP server (Oct 2024)
+- **[Phase 9A: Anonymization](docs/PHASE_9A_COMPLETION_REPORT.md)** - Anonymizer foundation (Oct 2024)
+- **[Phase 8: ML Models](docs/PHASE_8_COMPLETION_REPORT.md)** - Pre-trained models & inference (Oct 2024)
+
 ### Examples
 - **[Browser Demo](examples/)** - Interactive WASM demos
 - **[Integration Examples](examples/)** - Rust, Node.js, Cloudflare Workers
+- **[TypeScript Examples](packages/core/examples/)** - NPM package usage examples
 
 ---
 
@@ -599,11 +654,13 @@ This project is a **complete rewrite** of [llm-guard](https://github.com/protect
 ### Migration Stats
 
 - **Original Python:** ~9,000 lines across 217 files
-- **Rust Implementation:** ~28,200 lines across 77 files (includes benchmarking framework)
-- **Migration Time:** 3 months using Portalis + SPARC methodology
-- **Test Coverage:** Increased from 70% → 90%+
+- **Rust Implementation:** ~35,000+ lines across 100+ files (includes benchmarking, REST API, NPM package)
+- **Migration Time:** 4 months using Portalis + SPARC methodology
+- **Test Coverage:** Increased from 70% → 90%+ (304+ Rust tests, 60+ TypeScript tests)
 - **Performance:** **Validated 10-100x improvement** across all metrics (23,815x for latency)
 - **Benchmark Infrastructure:** 12 scripts, 1,000 test prompts, 7 automated charts, 4,000+ lines of documentation
+- **NPM Package:** Full TypeScript API with 34 files, 6,500+ LOC, multi-target builds, automated CI/CD
+- **REST API:** Axum-based HTTP API with 81 tests, health checks, scanner endpoints
 
 ### API Compatibility
 
@@ -637,23 +694,27 @@ let result = scanner.scan(prompt, &vault).await?;
 ## 🗺️ Roadmap
 
 ### Completed ✅
-- [x] **Phase 1:** Core infrastructure (SPARC methodology)
-- [x] **Phase 2:** Input scanners (12 scanners)
-- [x] **Phase 3:** Output scanners (10 scanners)
-- [x] **Phase 4:** ONNX Runtime integration
-- [x] **Phase 5:** WASM compilation
-- [x] **Phase 6:** Comprehensive testing (304+ tests)
-- [x] **Phase 7:** Performance benchmarking framework (1,000+ test prompts, 6 categories, validated claims)
+- [x] **Phase 1:** Core infrastructure (SPARC methodology) - Oct 2024
+- [x] **Phase 2:** Input scanners (12 scanners) - Oct 2024
+- [x] **Phase 3:** Output scanners (10 scanners) - Oct 2024
+- [x] **Phase 4:** ONNX Runtime integration - Oct 2024
+- [x] **Phase 5:** WASM compilation - Oct 2024
+- [x] **Phase 6:** Comprehensive testing (304+ tests, 90%+ coverage) - Oct 2024
+- [x] **Phase 7:** Performance benchmarking framework (1,000+ test prompts, 6 categories, validated claims) - Oct 2024
+- [x] **Phase 8:** Pre-trained ML models & inference engine (ONNX Runtime, model registry, caching) - Oct 2024
+- [x] **Phase 9A:** Anonymization foundation (anonymizer crate, 58 tests, NLP utilities) - Oct 2024
+- [x] **Phase 10A:** REST API with Axum (health checks, scanner endpoints, 81 tests) - Oct 2024
+- [x] **Phase 11:** NPM package publishing (@llm-shield/core, TypeScript API, CI/CD, 34 files) - Oct 2024
 
 ### In Progress 🚧
-- [ ] **Phase 8:** Pre-trained ML models (Q1 2026)
-- [ ] **Phase 9:** Anonymization/Deanonymization (Q2 2026)
+- [ ] **Phase 9B:** Complete anonymization/deanonymization implementation
+- [ ] **Phase 10B:** Enhanced REST API features (rate limiting, authentication, OpenAPI spec)
 
 ### Planned 📋
-- [ ] **Phase 10:** REST API with Axum (Q2 2026)
-- [ ] **Phase 11:** NPM package publishing (Q3 2026)
-- [ ] **Phase 12:** Python bindings with PyO3 (Q3 2026)
-- [ ] **Phase 13:** Production deployment examples (Q4 2026)
+- [ ] **Phase 12:** Python bindings with PyO3 (Q1 2025)
+- [ ] **Phase 13:** Production deployment examples (Docker, K8s, Terraform) (Q1 2025)
+- [ ] **Phase 14:** Cloud integrations (AWS, GCP, Azure) (Q2 2025)
+- [ ] **Phase 15:** Dashboard and monitoring (Q2 2025)
 
 ---
 
