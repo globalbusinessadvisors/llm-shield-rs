@@ -6,10 +6,18 @@
 pub mod model_loader;
 pub mod tokenizer;
 pub mod inference;
+pub mod registry;
+pub mod cache;
+pub mod types;
 
 pub use model_loader::{ModelLoader, ModelConfig, ModelType};
-pub use tokenizer::{TokenizerWrapper, TokenizerConfig};
-pub use inference::{InferenceEngine, InferenceResult};
+pub use tokenizer::{TokenizerWrapper, TokenizerConfig, Encoding};
+pub use inference::{InferenceEngine, InferenceResult, PostProcessing};
+pub use registry::{ModelRegistry, ModelTask, ModelVariant, ModelMetadata};
+pub use cache::{ResultCache, CacheConfig, CacheStats};
+pub use types::{
+    MLConfig, CacheSettings, HybridMode, DetectionMethod, InferenceMetrics,
+};
 
 use llm_shield_core::Error;
 

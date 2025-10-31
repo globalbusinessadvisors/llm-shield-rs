@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "claude-code": "^1.0.0",
     "claude-flow": "^2.7.12"
   }
 }

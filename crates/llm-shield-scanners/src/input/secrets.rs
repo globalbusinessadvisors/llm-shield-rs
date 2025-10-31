@@ -103,7 +103,7 @@ static AWS_MWS_KEY: LazyLock<Regex> = LazyLock::new(|| {
 
 // Azure Patterns
 static AZURE_CLIENT_SECRET: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)(azure|az)(.{0,20})?['\"]([0-9a-zA-Z\-_~]{34})['\"]").unwrap()
+    Regex::new(r#"(?i)(azure|az)(.{0,20})?['"]([0-9a-zA-Z_~-]{34})['"]"#).unwrap()
 });
 
 static AZURE_CONNECTION_STRING: LazyLock<Regex> = LazyLock::new(|| {
@@ -112,7 +112,7 @@ static AZURE_CONNECTION_STRING: LazyLock<Regex> = LazyLock::new(|| {
 
 // GCP Patterns
 static GCP_API_KEY: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)AIza[0-9A-Za-z\-_]{35}").unwrap()
+    Regex::new(r"(?i)AIza[0-9A-Za-z_-]{35}").unwrap()
 });
 
 static GCP_SERVICE_ACCOUNT: LazyLock<Regex> = LazyLock::new(|| {
@@ -125,7 +125,7 @@ static GITHUB_TOKEN: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 static GITHUB_CLASSIC_TOKEN: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)github(.{0,20})?['\"](ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36,40}['\"]").unwrap()
+    Regex::new(r#"(?i)github(.{0,20})?['"](ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36,40}['"]"#).unwrap()
 });
 
 // GitLab Patterns
@@ -214,7 +214,7 @@ static JWT_TOKEN: LazyLock<Regex> = LazyLock::new(|| {
 
 // Generic High Entropy Strings
 static GENERIC_SECRET: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?i)(api[_-]?key|apikey|secret|password|passwd|pwd|token|auth)['\"]?\s*[:=]\s*['"]?([A-Za-z0-9+/\-_]{16,})['"]?"#).unwrap()
+    Regex::new(r#"(?i)(api[_-]?key|apikey|secret|password|passwd|pwd|token|auth)['"]?\s*[:=]\s*['"]?([A-Za-z0-9+/_-]{16,})['"]?"#).unwrap()
 });
 
 /// Secrets scanner implementation

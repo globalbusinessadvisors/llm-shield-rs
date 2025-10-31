@@ -138,6 +138,86 @@ Benchmarks vs Python llm-guard:
 - Gzipped: ~500KB
 - Brotli: ~400KB
 
+## ML Infrastructure (Phase 8)
+
+New in Phase 8: WASM bindings for ML infrastructure components.
+
+### ModelRegistry
+
+Manage model metadata and downloads:
+
+```javascript
+import { ModelRegistryWasm, ModelTaskWasm, ModelVariantWasm } from '@llm-shield/wasm';
+
+const registry = ModelRegistryWasm.from_file('models/registry.json');
+
+// Check model availability
+const hasModel = registry.has_model(
+    ModelTaskWasm.PromptInjection,
+    ModelVariantWasm.FP16
+);
+
+// Get model metadata
+const metadata = JSON.parse(
+    registry.get_model_metadata_json(ModelTaskWasm.PromptInjection, ModelVariantWasm.FP16)
+);
+
+// Download model if needed
+const modelPath = await registry.ensure_model_available(
+    ModelTaskWasm.PromptInjection,
+    ModelVariantWasm.FP16
+);
+```
+
+### ResultCache
+
+LRU caching with TTL support:
+
+```javascript
+import { ResultCacheWasm, CacheConfig } from '@llm-shield/wasm';
+
+// Create cache with configuration
+const cache = new ResultCacheWasm(CacheConfig.production());
+// Production: 1000 entries, 1 hour TTL
+
+// Or use other presets
+const edgeCache = new ResultCacheWasm(CacheConfig.edge());
+// Edge: 100 entries, 10 minutes TTL
+
+// Cache a result
+const key = ResultCacheWasm.hash_key("input text");
+cache.insert(key, JSON.stringify(scanResult));
+
+// Get from cache
+const cached = cache.get(key);
+if (cached) {
+    const result = JSON.parse(cached);
+}
+
+// Get statistics
+const stats = cache.stats();
+console.log(`Hit rate: ${(stats.hit_rate() * 100).toFixed(2)}%`);
+console.log(`Total requests: ${stats.total_requests()}`);
+```
+
+### Configuration Presets
+
+```javascript
+// Production: balanced performance
+CacheConfig.production(); // 1000 entries, 1h TTL
+
+// Edge/Mobile: memory-optimized
+CacheConfig.edge(); // 100 entries, 10min TTL
+
+// High-traffic: aggressive caching
+CacheConfig.aggressive(); // 10000 entries, 2h TTL
+```
+
+### Documentation
+
+- **[WASM_ML_INTEGRATION.md](./WASM_ML_INTEGRATION.md)**: Complete ML infrastructure guide
+- **[Phase 8 Report](../../PHASE_8_WASM_INTEGRATION_REPORT.md)**: Implementation details
+
 ## License
 
 MIT

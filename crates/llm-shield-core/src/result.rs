@@ -136,7 +136,7 @@ impl ScanResult {
 }
 
 /// A detected entity in the scanned text
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Entity {
     /// Type of entity (e.g., "email", "ssn", "api_key")
     pub entity_type: String,

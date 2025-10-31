@@ -32,6 +32,29 @@ ndarray = { workspace = true }
 # Utilities
 tracing = { workspace = true }
 once_cell = { workspace = true }
+num_cpus = "1.16"
+
+# HTTP client for model downloads
+reqwest = { version = "0.12", features = ["json"] }
+
+# Cryptography for checksums
+sha2 = "0.10"
+
+# System directories
+dirs = "5.0"
+
+# Path expansion
+shellexpand = "3.1"
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }
+tempfile = "3.8"
+criterion = { workspace = true }
+
+[[bench]]
+name = "cache_bench"
+harness = false
+
+[[bench]]
+name = "registry_bench"
+harness = false

@@ -57,7 +57,7 @@ impl Default for MaliciousURLsConfig {
 
 // URL detection regex
 static URL_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"https?://[^\s<>\"]+|www\.[^\s<>\"]+").unwrap()
+    Regex::new(r#"https?://[^\s<>"]+|www\.[^\s<>"]+"#).unwrap()
 });
 
 static IP_URL_PATTERN: LazyLock<Regex> = LazyLock::new(|| {

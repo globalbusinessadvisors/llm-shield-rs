@@ -54,7 +54,7 @@ impl Default for URLReachabilityConfig {
 
 // URL detection regex
 static URL_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"https?://[^\s<>\"]+").unwrap()
+    Regex::new(r#"https?://[^\s<>"]+"#).unwrap()
 });
 
 /// URLReachability scanner implementation

@@ -1,0 +1,6 @@
+[package]
+name = "llm-shield-secrets"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

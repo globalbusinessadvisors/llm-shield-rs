@@ -102,7 +102,7 @@ static IP_ADDRESS_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 static URL_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"https?://[^\s<>\"]+|www\.[^\s<>\"]+").unwrap()
+    Regex::new(r#"https?://[^\s<>"]+|www\.[^\s<>"]+"#).unwrap()
 });
 
 static DATE_OF_BIRTH_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
