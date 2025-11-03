@@ -9,7 +9,7 @@ description = "ML model infrastructure for LLM Shield"
 
 [dependencies]
 # Core dependencies
-llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-core = { version = "0.1.0", path = "../llm-shield-core" }
 
 # Async
 tokio = { workspace = true }

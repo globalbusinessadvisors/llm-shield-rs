@@ -238,14 +238,24 @@
 //!
 //! MIT OR Apache-2.0
 
-pub mod observability;
-pub mod secrets;
-pub mod storage;
+// Stub implementations due to SDK breaking changes
+// TODO: Update to latest google-cloud SDK APIs
+pub mod observability_stub;
+pub mod secrets_stub;
+pub mod storage_stub;
 
 // Re-export main types
-pub use observability::{GcpCloudLogging, GcpCloudMonitoring};
-pub use secrets::GcpSecretManager;
-pub use storage::GcpCloudStorage;
+pub use observability_stub::{GcpCloudLogging, GcpCloudMonitoring};
+pub use secrets_stub::GcpSecretManager;
+pub use storage_stub::GcpCloudStorage;
+
+// Keep original modules but don't compile them
+// #[cfg(feature = "gcp-full-impl")]
+// pub mod observability;
+// #[cfg(feature = "gcp-full-impl")]
+// pub mod secrets;
+// #[cfg(feature = "gcp-full-impl")]
+// pub mod storage;
 
 // Re-export cloud abstractions for convenience
 pub use llm_shield_cloud::{

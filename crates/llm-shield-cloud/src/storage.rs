@@ -257,6 +257,43 @@ pub trait CloudStorage: Send + Sync {
     fn provider_name(&self) -> &str {
         "unknown"
     }
+
+    /// Deletes multiple objects in batch.
+    ///
+    /// # Arguments
+    ///
+    /// * `keys` - Vector of object keys/paths to delete
+    ///
+    /// # Errors
+    ///
+    /// Returns `CloudError::StorageDelete` if the batch delete fails.
+    async fn delete_objects(&self, keys: &[String]) -> Result<()> {
+        // Default implementation: delete one by one
+        for key in keys {
+            self.delete_object(key).await?;
+        }
+        Ok(())
+    }
+
+    /// Lists objects with metadata.
+    ///
+    /// # Arguments
+    ///
+    /// * `prefix` - The prefix to filter objects
+    ///
+    /// # Returns
+    ///
+    /// Returns a vector of (key, metadata) tuples.
+    ///
+    /// # Errors
+    ///
+    /// Returns `CloudError::StorageList` if the list operation fails.
+    async fn list_objects_with_metadata(&self, prefix: &str) -> Result<Vec<ObjectMetadata>> {
+        // Default implementation not provided - must be overridden
+        Err(CloudError::OperationFailed(
+            "list_objects_with_metadata not implemented".to_string(),
+        ))
+    }
 }
 
 #[cfg(test)]

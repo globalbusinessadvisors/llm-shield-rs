@@ -2,5 +2,9 @@
 name = "llm-shield-secrets"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Secrets detection and management for LLM Shield"
 
 [dependencies]

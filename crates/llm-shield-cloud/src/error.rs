@@ -15,28 +15,28 @@ pub enum CloudError {
     ProviderNotEnabled(String),
 
     // Secret management errors
-    #[error("Failed to fetch secret '{name}': {source}")]
+    #[error("Failed to fetch secret '{name}': {error}")]
     SecretFetch {
         name: String,
-        source: String,
+        error: String,
     },
 
-    #[error("Failed to create secret '{name}': {source}")]
+    #[error("Failed to create secret '{name}': {error}")]
     SecretCreate {
         name: String,
-        source: String,
+        error: String,
     },
 
-    #[error("Failed to update secret '{name}': {source}")]
+    #[error("Failed to update secret '{name}': {error}")]
     SecretUpdate {
         name: String,
-        source: String,
+        error: String,
     },
 
-    #[error("Failed to delete secret '{name}': {source}")]
+    #[error("Failed to delete secret '{name}': {error}")]
     SecretDelete {
         name: String,
-        source: String,
+        error: String,
     },
 
     #[error("Invalid secret format for '{name}': {reason}")]
@@ -52,34 +52,34 @@ pub enum CloudError {
     SecretNotFound(String),
 
     // Storage errors
-    #[error("Failed to fetch object '{key}' from storage: {source}")]
+    #[error("Failed to fetch object '{key}' from storage: {error}")]
     StorageFetch {
         key: String,
-        source: String,
+        error: String,
     },
 
-    #[error("Failed to read storage object '{key}': {source}")]
+    #[error("Failed to read storage object '{key}': {error}")]
     StorageRead {
         key: String,
-        source: String,
+        error: String,
     },
 
-    #[error("Failed to put object '{key}' to storage: {source}")]
+    #[error("Failed to put object '{key}' to storage: {error}")]
     StoragePut {
         key: String,
-        source: String,
+        error: String,
     },
 
-    #[error("Failed to delete object '{key}' from storage: {source}")]
+    #[error("Failed to delete object '{key}' from storage: {error}")]
     StorageDelete {
         key: String,
-        source: String,
+        error: String,
     },
 
-    #[error("Failed to list storage objects with prefix '{prefix}': {source}")]
+    #[error("Failed to list storage objects with prefix '{prefix}': {error}")]
     StorageList {
         prefix: String,
-        source: String,
+        error: String,
     },
 
     #[error("Storage object not found: '{0}'")]
@@ -91,6 +91,9 @@ pub enum CloudError {
 
     #[error("Failed to write log entry: {0}")]
     LogWrite(String),
+
+    #[error("Failed to export logs: {0}")]
+    LogExport(String),
 
     #[error("Failed to create trace span: {0}")]
     TraceSpanCreate(String),
@@ -125,8 +128,14 @@ pub enum CloudError {
     #[error("Network error: {0}")]
     Network(String),
 
+    #[error("Connection error: {0}")]
+    Connection(String),
+
     #[error("Connection timeout: {0}")]
     Timeout(String),
+
+    #[error("Authentication error: {0}")]
+    Authentication(String),
 
     // Serialization errors
     #[error("Serialization error: {0}")]
@@ -148,42 +157,82 @@ pub type Result<T> = std::result::Result<T, CloudError>;
 
 impl CloudError {
     /// Creates a new `SecretFetch` error.
-    pub fn secret_fetch(name: impl Into<String>, source: impl Into<String>) -> Self {
+    pub fn secret_fetch(name: impl Into<String>, error: impl Into<String>) -> Self {
         Self::SecretFetch {
             name: name.into(),
-            source: source.into(),
+            error: error.into(),
         }
     }
 
     /// Creates a new `SecretCreate` error.
-    pub fn secret_create(name: impl Into<String>, source: impl Into<String>) -> Self {
+    pub fn secret_create(name: impl Into<String>, error: impl Into<String>) -> Self {
         Self::SecretCreate {
             name: name.into(),
-            source: source.into(),
+            error: error.into(),
         }
     }
 
     /// Creates a new `SecretUpdate` error.
-    pub fn secret_update(name: impl Into<String>, source: impl Into<String>) -> Self {
+    pub fn secret_update(name: impl Into<String>, error: impl Into<String>) -> Self {
         Self::SecretUpdate {
             name: name.into(),
-            source: source.into(),
+            error: error.into(),
         }
     }
 
     /// Creates a new `StorageFetch` error.
-    pub fn storage_fetch(key: impl Into<String>, source: impl Into<String>) -> Self {
+    pub fn storage_fetch(key: impl Into<String>, error: impl Into<String>) -> Self {
         Self::StorageFetch {
             key: key.into(),
-            source: source.into(),
+            error: error.into(),
         }
     }
 
     /// Creates a new `StoragePut` error.
-    pub fn storage_put(key: impl Into<String>, source: impl Into<String>) -> Self {
+    pub fn storage_put(key: impl Into<String>, error: impl Into<String>) -> Self {
         Self::StoragePut {
             key: key.into(),
-            source: source.into(),
+            error: error.into(),
+        }
+    }
+
+    /// Creates a new `SecretDelete` error.
+    pub fn secret_delete(name: impl Into<String>, error: impl Into<String>) -> Self {
+        Self::SecretDelete {
+            name: name.into(),
+            error: error.into(),
+        }
+    }
+
+    /// Creates a new `StorageDelete` error.
+    pub fn storage_delete(key: impl Into<String>, error: impl Into<String>) -> Self {
+        Self::StorageDelete {
+            key: key.into(),
+            error: error.into(),
+        }
+    }
+
+    /// Creates a new `StorageRead` error.
+    pub fn storage_read(key: impl Into<String>, error: impl Into<String>) -> Self {
+        Self::StorageRead {
+            key: key.into(),
+            error: error.into(),
+        }
+    }
+
+    /// Alias for storage_fetch (for compatibility).
+    pub fn storage_get(key: impl Into<String>, error: impl Into<String>) -> Self {
+        Self::StorageFetch {
+            key: key.into(),
+            error: error.into(),
+        }
+    }
+
+    /// Creates a new `StorageList` error.
+    pub fn storage_list(prefix: impl Into<String>, error: impl Into<String>) -> Self {
+        Self::StorageList {
+            prefix: prefix.into(),
+            error: error.into(),
         }
     }
 }

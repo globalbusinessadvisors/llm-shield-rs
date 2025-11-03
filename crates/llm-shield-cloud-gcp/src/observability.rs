@@ -476,6 +476,7 @@ impl CloudLogger for GcpCloudLogging {
             labels: HashMap::new(),
             trace_id: None,
             span_id: None,
+            source: None,
         };
 
         self.log_structured(&entry).await

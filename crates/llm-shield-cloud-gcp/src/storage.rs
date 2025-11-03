@@ -160,7 +160,10 @@ impl CloudStorage for GcpCloudStorage {
                     ..Default::default()
                 })
                 .await
-                .map_err(|e| CloudError::StorageList(e.to_string()))?;
+                .map_err(|e| CloudError::StorageList {
+                    prefix: prefix.to_string(),
+                    error: e.to_string(),
+                })?;
 
             if let Some(items) = response.items {
                 for object in items {
@@ -290,15 +293,11 @@ impl CloudStorage for GcpCloudStorage {
             Range::default()
         };
 
-        let mut request = GetObjectRequest {
+        let request = GetObjectRequest {
             bucket: self.bucket.clone(),
             object: key.to_string(),
             ..Default::default()
         };
-
-        if let Some(ref version) = options.version_id {
-            request.generation = Some(version.parse().unwrap_or(0));
-        }
 
         let data = self
             .client
@@ -394,7 +393,10 @@ impl CloudStorage for GcpCloudStorage {
                     ..Default::default()
                 })
                 .await
-                .map_err(|e| CloudError::StorageList(e.to_string()))?;
+                .map_err(|e| CloudError::StorageList {
+                    prefix: prefix.to_string(),
+                    error: e.to_string(),
+                })?;
 
             if let Some(items) = response.items {
                 for object in items {
@@ -402,7 +404,8 @@ impl CloudStorage for GcpCloudStorage {
 
                     let last_modified = object
                         .updated
-                        .and_then(|t| chrono::DateTime::parse_from_rfc3339(&t).ok())
+                        .as_deref()
+                        .and_then(|t| chrono::DateTime::parse_from_rfc3339(t).ok())
                         .map(|dt| SystemTime::from(dt))
                         .unwrap_or_else(SystemTime::now);
 

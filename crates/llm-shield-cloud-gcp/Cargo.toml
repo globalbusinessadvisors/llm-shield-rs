@@ -2,21 +2,22 @@
 name = "llm-shield-cloud-gcp"
 version.workspace = true
 edition.workspace = true
-authors = ["LLM Shield Contributors"]
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 description = "GCP cloud integrations for LLM Shield - Secret Manager, Cloud Storage, Cloud Monitoring"
-license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["gcp", "cloud", "secrets", "storage", "monitoring"]
 categories = ["web-programming", "api-bindings"]
 
 [dependencies]
 # Core abstractions
-llm-shield-cloud = { path = "../llm-shield-cloud" }
+llm-shield-cloud = { version = "0.1.1", path = "../llm-shield-cloud" }
 
-# GCP SDK (official)
-google-cloud-auth = "0.16"
-google-cloud-googleapis = "0.14"
-google-cloud-storage = "0.21"
+# GCP SDK (official) - using older compatible versions
+google-cloud-auth = "0.13"
+google-cloud-googleapis = "0.11"
+google-cloud-storage = "0.15"
 google-cloud-pubsub = "0.25"
 
 # Secrets and monitoring via gRPC

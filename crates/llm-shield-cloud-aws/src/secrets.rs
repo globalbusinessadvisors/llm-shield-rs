@@ -208,11 +208,9 @@ impl CloudSecretManager for AwsSecretsManager {
                 .await
                 .map_err(|e| CloudError::SecretList(e.to_string()))?;
 
-            if let Some(secret_list) = response.secret_list() {
-                for secret in secret_list {
-                    if let Some(name) = secret.name() {
-                        secret_names.push(name.to_string());
-                    }
+            for secret in response.secret_list() {
+                if let Some(name) = secret.name() {
+                    secret_names.push(name.to_string());
                 }
             }
 
@@ -308,11 +306,9 @@ impl CloudSecretManager for AwsSecretsManager {
             .unwrap_or(created_at);
 
         let mut tags = HashMap::new();
-        if let Some(tag_list) = response.tags() {
-            for tag in tag_list {
-                if let (Some(key), Some(value)) = (tag.key(), tag.value()) {
-                    tags.insert(key.to_string(), value.to_string());
-                }
+        for tag in response.tags() {
+            if let (Some(key), Some(value)) = (tag.key(), tag.value()) {
+                tags.insert(key.to_string(), value.to_string());
             }
         }
 

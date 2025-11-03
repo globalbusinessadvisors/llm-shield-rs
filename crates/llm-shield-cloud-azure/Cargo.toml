@@ -2,16 +2,17 @@
 name = "llm-shield-cloud-azure"
 version.workspace = true
 edition.workspace = true
-authors = ["LLM Shield Contributors"]
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 description = "Azure cloud integrations for LLM Shield - Key Vault, Blob Storage, Azure Monitor"
-license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["azure", "cloud", "secrets", "storage", "monitor"]
 categories = ["web-programming", "api-bindings"]
 
 [dependencies]
 # Core abstractions
-llm-shield-cloud = { path = "../llm-shield-cloud" }
+llm-shield-cloud = { version = "0.1.1", path = "../llm-shield-cloud" }
 
 # Azure SDK (official, beta)
 azure_core = "0.20"

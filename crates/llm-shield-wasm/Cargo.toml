@@ -12,9 +12,11 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 llm-shield-core = { path = "../llm-shield-core" }
-# Temporarily commented out due to compilation errors in llm-shield-scanners
+# Commented out - native dependencies not compatible with WASM:
+# - llm-shield-scanners pulls in tokenizers->onig_sys (native C)
+# - llm-shield-models pulls in tokenizers and ort (native)
 # llm-shield-scanners = { path = "../llm-shield-scanners" }
-llm-shield-models = { path = "../llm-shield-models" }
+# llm-shield-models = { path = "../llm-shield-models" }
 
 # WASM
 wasm-bindgen = "0.2"

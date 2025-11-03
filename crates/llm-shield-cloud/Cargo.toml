@@ -2,9 +2,10 @@
 name = "llm-shield-cloud"
 version.workspace = true
 edition.workspace = true
-authors = ["LLM Shield Contributors"]
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 description = "Cloud abstraction layer for LLM Shield - unified traits for AWS, GCP, and Azure"
-license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["cloud", "aws", "gcp", "azure", "abstraction"]
 categories = ["web-programming", "api-bindings"]

@@ -2,16 +2,17 @@
 name = "llm-shield-cloud-aws"
 version.workspace = true
 edition.workspace = true
-authors = ["LLM Shield Contributors"]
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 description = "AWS cloud integrations for LLM Shield - Secrets Manager, S3, CloudWatch"
-license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["aws", "cloud", "secrets", "s3", "cloudwatch"]
 categories = ["web-programming", "api-bindings"]
 
 [dependencies]
 # Core abstractions
-llm-shield-cloud = { path = "../llm-shield-cloud" }
+llm-shield-cloud = { version = "0.1.1", path = "../llm-shield-cloud" }
 
 # AWS SDK (official)
 aws-config = "1.5"

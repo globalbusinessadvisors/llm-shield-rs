@@ -286,13 +286,14 @@ impl CloudStorage for AwsS3Storage {
             let response = request
                 .send()
                 .await
-                .map_err(|e| CloudError::StorageList(e.to_string()))?;
+                .map_err(|e| CloudError::StorageList {
+                    prefix: prefix.to_string(),
+                    error: e.to_string(),
+                })?;
 
-            if let Some(contents) = response.contents() {
-                for object in contents {
-                    if let Some(key) = object.key() {
-                        object_keys.push(key.to_string());
-                    }
+            for object in response.contents() {
+                if let Some(key) = object.key() {
+                    object_keys.push(key.to_string());
                 }
             }
 
@@ -399,12 +400,9 @@ impl CloudStorage for AwsS3Storage {
 
         let mut request = self.client.get_object().bucket(&self.bucket).key(key);
 
-        if let Some(ref range) = options.range {
-            request = request.range(range.clone());
-        }
-
-        if let Some(ref version_id) = options.version_id {
-            request = request.version_id(version_id.clone());
+        if let Some((start, end)) = options.range {
+            let range_str = format!("bytes={}-{}", start, end);
+            request = request.range(range_str);
         }
 
         let response = request
@@ -503,7 +501,7 @@ impl CloudStorage for AwsS3Storage {
                 .build()
                 .map_err(|e| CloudError::StorageDelete {
                     key: "batch".to_string(),
-                    source: e.to_string(),
+                    error: e.to_string(),
                 })?;
 
             self.client
@@ -514,7 +512,7 @@ impl CloudStorage for AwsS3Storage {
                 .await
                 .map_err(|e| CloudError::StorageDelete {
                     key: "batch".to_string(),
-                    source: e.to_string(),
+                    error: e.to_string(),
                 })?;
         }
 
@@ -543,33 +541,34 @@ impl CloudStorage for AwsS3Storage {
             let response = request
                 .send()
                 .await
-                .map_err(|e| CloudError::StorageList(e.to_string()))?;
+                .map_err(|e| CloudError::StorageList {
+                    prefix: prefix.to_string(),
+                    error: e.to_string(),
+                })?;
 
-            if let Some(contents) = response.contents() {
-                for object in contents {
-                    if let Some(key) = object.key() {
-                        let size = object.size().unwrap_or(0) as u64;
-                        let last_modified = object
-                            .last_modified()
-                            .and_then(|dt| {
-                                SystemTime::UNIX_EPOCH.checked_add(
-                                    std::time::Duration::from_secs(dt.secs() as u64),
-                                )
-                            })
-                            .unwrap_or_else(SystemTime::now);
+            for object in response.contents() {
+                if let Some(key) = object.key() {
+                    let size = object.size().unwrap_or(0) as u64;
+                    let last_modified = object
+                        .last_modified()
+                        .and_then(|dt| {
+                            SystemTime::UNIX_EPOCH.checked_add(
+                                std::time::Duration::from_secs(dt.secs() as u64),
+                            )
+                        })
+                        .unwrap_or_else(SystemTime::now);
 
-                        let etag = object.e_tag().map(String::from);
-                        let storage_class =
-                            object.storage_class().map(|sc| sc.as_str().to_string());
+                    let etag = object.e_tag().map(String::from);
+                    let storage_class =
+                        object.storage_class().map(|sc| sc.as_str().to_string());
 
-                        object_metadata.push(ObjectMetadata {
-                            size,
-                            last_modified,
-                            content_type: None, // Not available in list response
-                            etag,
-                            storage_class,
-                        });
-                    }
+                    object_metadata.push(ObjectMetadata {
+                        size,
+                        last_modified,
+                        content_type: None, // Not available in list response
+                        etag,
+                        storage_class,
+                    });
                 }
             }
 

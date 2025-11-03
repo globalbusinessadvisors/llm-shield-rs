@@ -1,5 +1,5 @@
 {
-  "name": "@llm-shield/wasm",
+  "name": "llm-shield-wasm",
   "version": "0.1.0",
   "description": "LLM Shield security toolkit compiled to WebAssembly",
   "main": "index.js",

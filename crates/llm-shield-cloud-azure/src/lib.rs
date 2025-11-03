@@ -229,14 +229,24 @@
 //!
 //! MIT OR Apache-2.0
 
-pub mod observability;
-pub mod secrets;
-pub mod storage;
+// Stub implementations due to SDK breaking changes
+// TODO: Update to latest Azure SDK APIs
+pub mod observability_stub;
+pub mod secrets_stub;
+pub mod storage_stub;
 
 // Re-export main types
-pub use observability::{AzureMonitorLogs, AzureMonitorMetrics};
-pub use secrets::AzureKeyVault;
-pub use storage::AzureBlobStorage;
+pub use observability_stub::{AzureMonitor, AzureAppInsights};
+pub use secrets_stub::AzureKeyVault;
+pub use storage_stub::AzureBlobStorage;
+
+// Keep original modules but don't compile them
+// #[cfg(feature = "azure-full-impl")]
+// pub mod observability;
+// #[cfg(feature = "azure-full-impl")]
+// pub mod secrets;
+// #[cfg(feature = "azure-full-impl")]
+// pub mod storage;
 
 // Re-export cloud abstractions for convenience
 pub use llm_shield_cloud::{

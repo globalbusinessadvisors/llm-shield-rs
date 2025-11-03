@@ -2,5 +2,9 @@
 name = "llm-shield-nlp"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Natural language processing utilities for LLM Shield"
 
 [dependencies]

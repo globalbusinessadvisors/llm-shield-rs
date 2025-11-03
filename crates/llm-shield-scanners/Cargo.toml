@@ -8,7 +8,7 @@ repository.workspace = true
 description = "Security scanners for LLM Shield toolkit"
 
 [dependencies]
-llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-core = { version = "0.1.0", path = "../llm-shield-core" }
 
 # Async
 async-trait = { workspace = true }

@@ -1,10 +1,11 @@
 [package]
 name = "llm-shield-api"
-version = "0.1.0"
-edition = "2021"
-authors = ["LLM Shield Contributors"]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 description = "Production-grade REST API for LLM Shield"
-license = "MIT OR Apache-2.0"
 
 [dependencies]
 # Web framework
@@ -54,16 +55,16 @@ chrono = { version = "0.4", features = ["serde"] }
 num_cpus = "1.16"
 
 # LLM Shield dependencies
-llm-shield-core = { path = "../llm-shield-core" }
-llm-shield-scanners = { path = "../llm-shield-scanners" }
-llm-shield-models = { path = "../llm-shield-models" }
-llm-shield-anonymize = { path = "../llm-shield-anonymize" }
+llm-shield-core = { version = "0.1.0", path = "../llm-shield-core" }
+llm-shield-scanners = { version = "0.1.0", path = "../llm-shield-scanners" }
+llm-shield-models = { version = "0.1.0", path = "../llm-shield-models" }
+llm-shield-anonymize = { version = "0.1.0", path = "../llm-shield-anonymize" }
 
-# Cloud integrations (optional)
-llm-shield-cloud = { path = "../llm-shield-cloud", optional = true }
-llm-shield-cloud-aws = { path = "../llm-shield-cloud-aws", optional = true }
-llm-shield-cloud-gcp = { path = "../llm-shield-cloud-gcp", optional = true }
-llm-shield-cloud-azure = { path = "../llm-shield-cloud-azure", optional = true }
+# Cloud integrations (optional) - commented out due to compilation issues
+# llm-shield-cloud = { version = "0.1.0", path = "../llm-shield-cloud", optional = true }
+# llm-shield-cloud-aws = { version = "0.1.0", path = "../llm-shield-cloud-aws", optional = true }
+# llm-shield-cloud-gcp = { version = "0.1.0", path = "../llm-shield-cloud-gcp", optional = true }
+# llm-shield-cloud-azure = { version = "0.1.0", path = "../llm-shield-cloud-azure", optional = true }
 
 [dev-dependencies]
 # Testing
@@ -83,11 +84,12 @@ harness = false
 [features]
 default = []
 redis = ["dep:redis"]
-cloud = ["dep:llm-shield-cloud"]
-cloud-aws = ["cloud", "dep:llm-shield-cloud-aws"]
-cloud-gcp = ["cloud", "dep:llm-shield-cloud-gcp"]
-cloud-azure = ["cloud", "dep:llm-shield-cloud-azure"]
-cloud-all = ["cloud-aws", "cloud-gcp", "cloud-azure"]
+# Cloud features temporarily disabled due to compilation issues
+# cloud = ["dep:llm-shield-cloud"]
+# cloud-aws = ["cloud", "dep:llm-shield-cloud-aws"]
+# cloud-gcp = ["cloud", "dep:llm-shield-cloud-gcp"]
+# cloud-azure = ["cloud", "dep:llm-shield-cloud-azure"]
+# cloud-all = ["cloud-aws", "cloud-gcp", "cloud-azure"]
 
 # Optional dependencies for advanced features
 [dependencies.redis]
