@@ -1,6 +1,6 @@
 {
   "name": "llm-shield-core",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Enterprise-grade LLM security toolkit for JavaScript/TypeScript with WASM",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -59,13 +59,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/llm-shield/llm-shield-rs.git",
+    "url": "https://github.com/globalbusinessadvisors/llm-shield-rs.git",
     "directory": "packages/core"
   },
   "bugs": {
-    "url": "https://github.com/llm-shield/llm-shield-rs/issues"
+    "url": "https://github.com/globalbusinessadvisors/llm-shield-rs/issues"
   },
-  "homepage": "https://llm-shield.dev",
+  "homepage": "https://github.com/globalbusinessadvisors/llm-shield-rs#readme",
   "engines": {
     "node": ">=16.0.0"
   },
