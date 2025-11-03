@@ -1,6 +1,6 @@
 {
   "name": "llm-shield-core",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Enterprise-grade LLM security toolkit for JavaScript/TypeScript with WASM",
   "type": "module",
   "main": "./dist/index.cjs",

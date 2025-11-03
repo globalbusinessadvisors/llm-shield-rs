@@ -3,9 +3,9 @@
 > 🛡️ Enterprise-grade LLM security toolkit for JavaScript/TypeScript with WebAssembly
 
 [![npm version](https://badge.fury.io/js/llm-shield-core.svg)](https://www.npmjs.com/package/llm-shield-core)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../../LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/globalbusinessadvisors/llm-shield-rs/blob/main/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
-[![CI](https://github.com/globalbusinessadvisors/llm-shield-rs/workflows/CI/badge.svg)](https://github.com/globalbusinessadvisors/llm-shield-rs/actions)
+[![CI/CD](https://github.com/globalbusinessadvisors/llm-shield-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/globalbusinessadvisors/llm-shield-rs/actions)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/globalbusinessadvisors/llm-shield-rs)
 
 **LLM Shield** is a high-performance security toolkit for protecting Large Language Model (LLM) applications from prompt injection, toxic content, data leaks, and other security threats. Built with Rust and compiled to WebAssembly for near-native performance.
