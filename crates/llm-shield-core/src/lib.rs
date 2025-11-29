@@ -28,8 +28,8 @@ pub mod vault;
 pub use async_trait::async_trait;
 pub use error::{Error, Result};
 pub use result::{Entity, RiskFactor, ScanResult, Severity};
-pub use scanner::{InputScanner, OutputScanner, Scanner, ScannerType};
-pub use types::{ScannerConfig, ScannerMetadata};
+pub use scanner::{InputScanner, OutputScanner, Scanner, ScannerPipeline, ScannerType};
+pub use types::{ScannerConfig, ScannerMetadata, ScannerCategory, PerformanceInfo};
 pub use vault::Vault;
 
 /// Version information

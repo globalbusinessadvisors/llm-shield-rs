@@ -1,0 +1,57 @@
+[package]
+name = "llm-shield-sdk"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Enterprise-grade SDK for LLM Shield - comprehensive security toolkit for Large Language Models"
+documentation = "https://docs.rs/llm-shield-sdk"
+readme = "README.md"
+keywords = ["llm", "security", "ai", "ml", "sdk"]
+categories = ["api-bindings", "development-tools", "asynchronous"]
+
+[features]
+default = ["all-scanners"]
+all-scanners = [
+    "input-scanners",
+    "output-scanners",
+]
+input-scanners = []
+output-scanners = []
+# Optional ML model support
+ml-models = []
+# Optional cloud integrations
+cloud-aws = ["llm-shield-cloud-aws"]
+cloud-gcp = ["llm-shield-cloud-gcp"]
+cloud-azure = ["llm-shield-cloud-azure"]
+
+[dependencies]
+# Core crates
+llm-shield-core = { version = "0.1.0", path = "../llm-shield-core" }
+llm-shield-scanners = { version = "0.1.0", path = "../llm-shield-scanners" }
+
+# Optional cloud crates
+llm-shield-cloud-aws = { version = "0.1.0", path = "../llm-shield-cloud-aws", optional = true }
+llm-shield-cloud-gcp = { version = "0.1.0", path = "../llm-shield-cloud-gcp", optional = true }
+llm-shield-cloud-azure = { version = "0.1.0", path = "../llm-shield-cloud-azure", optional = true }
+
+# Async runtime
+async-trait = { workspace = true }
+tokio = { workspace = true }
+futures = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Observability
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full", "test-util", "macros"] }
+criterion = { workspace = true }

@@ -14,6 +14,7 @@ members = [
     "crates/llm-shield-cloud-aws",
     "crates/llm-shield-cloud-gcp",
     "crates/llm-shield-cloud-azure",
+    "crates/llm-shield-sdk",
 ]
 
 [workspace.package]

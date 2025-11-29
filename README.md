@@ -17,6 +17,7 @@ A high-performance rewrite of [llm-guard](https://github.com/protectai/llm-guard
 - 🔒 **22 Production-Ready Scanners** - 12 input + 10 output validators
 - ⚡ **10x Performance** - Sub-millisecond scanning with zero-copy processing
 - 🌐 **Universal Deployment** - Native, WASM, browser, edge, serverless
+- 🦀 **Rust SDK** - Enterprise-grade SDK with fluent builder API, presets, and async scanning
 - 📦 **NPM Package** - Official TypeScript/JavaScript package (llm-shield-core@0.2.1) with full WASM bindings
 - 🧪 **Enterprise Testing** - 435+ comprehensive tests (375 Rust + 60 TypeScript) with 90%+ coverage
 - 🎯 **Type-Safe** - Compile-time guarantees with Rust's type system + TypeScript definitions
@@ -140,7 +141,62 @@ Deployment Targets:
 
 ## 🚀 Quick Start
 
-### Rust
+### Rust SDK (Recommended)
+
+The LLM Shield SDK provides the easiest way to integrate security scanning into your Rust applications:
+
+```toml
+# Cargo.toml
+[dependencies]
+llm-shield-sdk = "0.1"
+tokio = { version = "1", features = ["full"] }
+```
+
+```rust
+use llm_shield_sdk::prelude::*;
+
+#[tokio::main]
+async fn main() -> SdkResult<()> {
+    // Create a shield with standard security level
+    let shield = Shield::standard()?;
+
+    // Scan a prompt before sending to LLM
+    let result = shield.scan_prompt("Hello, how are you?").await?;
+
+    if result.is_valid {
+        println!("✅ Prompt is safe to send to LLM");
+    } else {
+        println!("⚠️ Security risk detected: {:?}", result.risk_factors);
+    }
+
+    // Scan LLM output before showing to user
+    let output_result = shield.scan_output(&llm_response).await?;
+
+    Ok(())
+}
+```
+
+**Security Presets:**
+- `Shield::strict()` - Maximum security for regulated industries
+- `Shield::standard()` - Balanced security for general applications
+- `Shield::permissive()` - Minimal security for development
+
+**Custom Configuration:**
+```rust
+let shield = Shield::builder()
+    .with_preset(Preset::Standard)
+    .add_input_scanner(BanSubstrings::with_substrings(["password", "secret"])?)
+    .add_output_scanner(Sensitive::default_config()?)
+    .with_short_circuit(0.9)
+    .with_parallel_execution(true)
+    .build()?;
+```
+
+See [SDK Documentation](crates/llm-shield-sdk/README.md) for complete API reference.
+
+### Rust (Low-Level API)
+
+For direct scanner access:
 
 ```toml
 # Cargo.toml
@@ -786,6 +842,7 @@ spec:
 ## 📚 Documentation
 
 ### Core Documentation
+- **[SDK Documentation](crates/llm-shield-sdk/README.md)** - Enterprise-grade Rust SDK guide
 - **[Implementation Summary](plans/IMPLEMENTATION_SUMMARY.md)** - Complete feature list, statistics, architecture
 - **[Quick Reference](docs/QUICK_REFERENCE.md)** - Developer quick start guide
 - **[Technical Decisions](docs/TECHNICAL_DECISIONS.md)** - Architecture decisions and rationale
