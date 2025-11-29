@@ -1,0 +1,68 @@
+{
+  "name": "@llm-dev-ops/shield-sdk",
+  "version": "1.0.0",
+  "description": "Enterprise-grade SDK for securing Large Language Model applications",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./scanners": {
+      "import": "./dist/scanners/index.js",
+      "types": "./dist/scanners/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "llm",
+    "security",
+    "sdk",
+    "prompt-injection",
+    "toxicity",
+    "ai-security",
+    "content-moderation",
+    "pii-detection",
+    "secrets-detection",
+    "llm-guard",
+    "openai",
+    "anthropic",
+    "langchain"
+  ],
+  "author": "LLM Dev Ops",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LLM-Dev-Ops/shield.git",
+    "directory": "packages/shield-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/LLM-Dev-Ops/shield/issues"
+  },
+  "homepage": "https://github.com/LLM-Dev-Ops/shield#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.1"
+  }
+}
