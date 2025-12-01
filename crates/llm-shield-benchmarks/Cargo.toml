@@ -1,0 +1,48 @@
+[package]
+name = "llm-shield-benchmarks"
+version = "0.1.0"
+edition = "2021"
+authors = ["LLM Shield Contributors"]
+license = "MIT OR Apache-2.0"
+description = "Canonical benchmark interface for LLM Shield - compatible with benchmark-target repos"
+repository = "https://github.com/llm-shield/llm-shield-rs"
+
+[lib]
+name = "llm_shield_benchmarks"
+path = "src/lib.rs"
+
+[[bin]]
+name = "llm-shield-bench"
+path = "src/bin/run_benchmarks.rs"
+
+[dependencies]
+# Core LLM Shield dependencies
+llm-shield-core = { path = "../llm-shield-core" }
+llm-shield-scanners = { path = "../llm-shield-scanners" }
+llm-shield-secrets = { path = "../llm-shield-secrets" }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Time utilities
+chrono = { version = "0.4", features = ["serde"] }
+
+# Error handling
+thiserror = "1"
+anyhow = "1"
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+
+# CLI support
+clap = { version = "4", features = ["derive"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[dev-dependencies]
+tokio-test = "0.4"
+pretty_assertions = "1"
