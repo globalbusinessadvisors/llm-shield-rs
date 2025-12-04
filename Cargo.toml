@@ -26,6 +26,10 @@ authors = ["LLM Shield Contributors"]
 repository = "https://github.com/llm-shield/llm-shield-rs"
 
 [workspace.dependencies]
+# LLM-Dev-Ops upstream dependencies (Phase 2A - compile-time only)
+llm-policy-engine = { git = "https://github.com/LLM-Dev-Ops/policy-engine", branch = "main" }
+llm-config-manager = { git = "https://github.com/LLM-Dev-Ops/config-manager", branch = "main" }
+
 # Async runtime
 tokio = { version = "1.35", features = ["full"] }
 async-trait = "0.1"

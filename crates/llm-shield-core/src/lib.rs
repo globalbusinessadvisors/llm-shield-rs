@@ -23,6 +23,7 @@ pub mod result;
 pub mod scanner;
 pub mod types;
 pub mod vault;
+pub mod adapters;
 
 // Re-exports for convenience
 pub use async_trait::async_trait;
@@ -31,6 +32,14 @@ pub use result::{Entity, RiskFactor, ScanResult, Severity};
 pub use scanner::{InputScanner, OutputScanner, Scanner, ScannerPipeline, ScannerType};
 pub use types::{ScannerConfig, ScannerMetadata, ScannerCategory, PerformanceInfo};
 pub use vault::Vault;
+
+// Re-export adapter types for upstream integration
+pub use adapters::{
+    PolicyAdapter, PolicyDecision, PolicyContext, PolicyEvaluator,
+    EnforcementAction, PolicyResult, PolicyHook,
+    ConfigAdapter, ShieldParameters, ThresholdConfig, PatternConfig,
+    ConfigLoader, ConfigSource, ConfigHook,
+};
 
 /// Version information
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

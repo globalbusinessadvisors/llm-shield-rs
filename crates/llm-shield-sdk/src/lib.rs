@@ -147,6 +147,7 @@ pub mod prelude;
 pub mod preset;
 pub mod scanner_factory;
 pub mod shield;
+pub mod integrations;
 
 // Re-export main types for convenience
 pub use builder::ShieldBuilder;
@@ -155,10 +156,25 @@ pub use error::{SdkError, SdkResult};
 pub use preset::Preset;
 pub use shield::Shield;
 
+// Re-export integration types
+pub use integrations::{
+    PolicyIntegration, PolicyIntegrationBuilder,
+    ConfigIntegration, ConfigIntegrationBuilder,
+    RuntimeHooks, ScanHook, HookResult,
+};
+
 // Re-export core types
 pub use llm_shield_core::{
     Entity, Error as CoreError, Result as CoreResult, RiskFactor, ScanResult, Scanner,
     ScannerType, Severity, Vault, ScannerPipeline,
+};
+
+// Re-export core adapter types for upstream integration (Phase 2B)
+pub use llm_shield_core::{
+    PolicyAdapter, PolicyDecision, PolicyContext, PolicyEvaluator,
+    EnforcementAction, PolicyResult, PolicyHook,
+    ConfigAdapter, ShieldParameters, ThresholdConfig, PatternConfig,
+    ConfigLoader, ConfigSource, ConfigHook,
 };
 
 // Re-export all scanners
