@@ -33,5 +33,12 @@ url = "2.5"
 # Observability
 tracing = { workspace = true }
 
+# Phase 2B Infra dependencies (optional - use with "infra" feature)
+infra-errors = { workspace = true, optional = true }
+
+[features]
+default = []
+infra = ["infra-errors"]
+
 [dev-dependencies]
 criterion = { workspace = true }

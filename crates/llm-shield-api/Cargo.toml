@@ -60,6 +60,18 @@ llm-shield-scanners = { version = "0.1.0", path = "../llm-shield-scanners" }
 llm-shield-models = { version = "0.1.0", path = "../llm-shield-models" }
 llm-shield-anonymize = { version = "0.1.0", path = "../llm-shield-anonymize" }
 
+# Phase 2B Infra dependencies (optional - use with "infra" feature)
+infra-errors = { workspace = true, optional = true }
+infra-config = { workspace = true, optional = true }
+infra-otel = { workspace = true, optional = true }
+infra-cache = { workspace = true, optional = true }
+infra-retry = { workspace = true, optional = true }
+infra-rate-limit = { workspace = true, optional = true }
+infra-auth = { workspace = true, optional = true }
+infra-http = { workspace = true, optional = true }
+infra-audit = { workspace = true, optional = true }
+infra-crypto = { workspace = true, optional = true }
+
 # Cloud integrations (optional) - commented out due to compilation issues
 # llm-shield-cloud = { version = "0.1.0", path = "../llm-shield-cloud", optional = true }
 # llm-shield-cloud-aws = { version = "0.1.0", path = "../llm-shield-cloud-aws", optional = true }
@@ -90,6 +102,20 @@ redis = ["dep:redis"]
 # cloud-gcp = ["cloud", "dep:llm-shield-cloud-gcp"]
 # cloud-azure = ["cloud", "dep:llm-shield-cloud-azure"]
 # cloud-all = ["cloud-aws", "cloud-gcp", "cloud-azure"]
+
+# Phase 2B Infra integrations
+infra = [
+    "infra-errors",
+    "infra-config",
+    "infra-otel",
+    "infra-cache",
+    "infra-retry",
+    "infra-rate-limit",
+    "infra-auth",
+    "infra-http",
+    "infra-audit",
+    "infra-crypto",
+]
 
 # Optional dependencies for advanced features
 [dependencies.redis]

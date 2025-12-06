@@ -39,5 +39,11 @@ criterion = { workspace = true }
 name = "cloud_bench"
 harness = false
 
+# Phase 2B Infra dependencies (optional - use with "infra" feature)
+infra-errors = { workspace = true, optional = true }
+infra-retry = { workspace = true, optional = true }
+infra-otel = { workspace = true, optional = true }
+
 [features]
 default = []
+infra = ["infra-errors", "infra-retry", "infra-otel"]

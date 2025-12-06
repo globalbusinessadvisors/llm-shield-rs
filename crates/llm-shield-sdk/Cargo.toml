@@ -25,6 +25,13 @@ ml-models = []
 cloud-aws = ["llm-shield-cloud-aws"]
 cloud-gcp = ["llm-shield-cloud-gcp"]
 cloud-azure = ["llm-shield-cloud-azure"]
+# Phase 2B Infra integrations
+infra = [
+    "infra-errors",
+    "infra-retry",
+    "infra-llm-client",
+    "infra-cache",
+]
 
 [dependencies]
 # Core crates
@@ -51,6 +58,12 @@ anyhow = { workspace = true }
 
 # Observability
 tracing = { workspace = true }
+
+# Phase 2B Infra dependencies (optional - use with "infra" feature)
+infra-errors = { workspace = true, optional = true }
+infra-retry = { workspace = true, optional = true }
+infra-llm-client = { workspace = true, optional = true }
+infra-cache = { workspace = true, optional = true }
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["full", "test-util", "macros"] }

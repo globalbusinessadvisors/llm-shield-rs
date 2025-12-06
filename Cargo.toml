@@ -30,6 +30,22 @@ repository = "https://github.com/llm-shield/llm-shield-rs"
 llm-policy-engine = { git = "https://github.com/LLM-Dev-Ops/policy-engine", branch = "main" }
 llm-config-manager = { git = "https://github.com/LLM-Dev-Ops/config-manager", branch = "main" }
 
+# LLM-Dev-Ops Infra dependencies (Phase 2B - provider layer)
+infra-errors = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-config = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-otel = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-cache = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-retry = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-rate-limit = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-auth = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-llm-client = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-http = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-audit = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-crypto = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-id = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-json = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+infra-schema = { git = "https://github.com/LLM-Dev-Ops/infra", branch = "main" }
+
 # Async runtime
 tokio = { version = "1.35", features = ["full"] }
 async-trait = "0.1"

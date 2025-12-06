@@ -46,6 +46,15 @@ dirs = "5.0"
 # Path expansion
 shellexpand = "3.1"
 
+# Phase 2B Infra dependencies (optional - use with "infra" feature)
+infra-cache = { workspace = true, optional = true }
+infra-retry = { workspace = true, optional = true }
+infra-errors = { workspace = true, optional = true }
+
+[features]
+default = []
+infra = ["infra-cache", "infra-retry", "infra-errors"]
+
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }
 tempfile = "3.8"

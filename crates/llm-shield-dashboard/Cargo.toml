@@ -58,5 +58,13 @@ mockall = "0.12"
 tower = { version = "0.4", features = ["util"] }
 http-body-util = "0.1"
 
+# Phase 2B Infra dependencies (optional - use with "infra" feature)
+infra-errors = { workspace = true, optional = true }
+infra-auth = { workspace = true, optional = true }
+infra-otel = { workspace = true, optional = true }
+infra-audit = { workspace = true, optional = true }
+infra-cache = { workspace = true, optional = true }
+
 [features]
 default = []
+infra = ["infra-errors", "infra-auth", "infra-otel", "infra-audit", "infra-cache"]

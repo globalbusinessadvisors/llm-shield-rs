@@ -18,6 +18,14 @@ futures = { workspace = true }
 tracing-subscriber = { workspace = true }
 tokio = { workspace = true }
 
+# Phase 2B Infra dependencies
+infra-errors = { workspace = true, optional = true }
+infra-json = { workspace = true, optional = true }
+
+[features]
+default = []
+infra = ["infra-errors", "infra-json"]
+
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util", "macros"] }
 criterion = { workspace = true }

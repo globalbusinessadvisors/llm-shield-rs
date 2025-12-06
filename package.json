@@ -1,6 +1,17 @@
 {
   "dependencies": {
     "claude-code": "^1.0.0",
-    "claude-flow": "^2.7.40"
+    "claude-flow": "^2.7.41"
+  },
+  "optionalDependencies": {
+    "@llm-dev-ops/infra": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@llm-dev-ops/infra": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@llm-dev-ops/infra": {
+      "optional": true
+    }
   }
 }
